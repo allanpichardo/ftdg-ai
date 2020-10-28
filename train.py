@@ -12,20 +12,20 @@ if __name__ == '__main__':
         os.makedirs(log_dir, exist_ok=True)
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'),
-                        shuffle=True, is_autoencoder=True, use_raw_audio=False,
+                        shuffle=True, is_autoencoder=False, use_raw_audio=False,
                         batch_size=8, subset='training')
 
     val = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'),
-                        shuffle=True, is_autoencoder=True, use_raw_audio=False,
+                        shuffle=True, is_autoencoder=False, use_raw_audio=False,
                         batch_size=8, subset='validation')
 
-    model = get_1d_autoencoder()
+    model = get_1d_model(n_classes=train.n_classes)
     model.compile(
         optimizer=tf.keras.optimizers.SGD(learning_rate=0.001),
-        loss=tf.keras.losses.MeanSquaredError(),
+        loss=tfa.losses.TripletSemiHardLoss(),
         metrics=['accuracy'],
     )
     model.fit(train, validation_data=val, epochs=10, callbacks=[
         tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True),
-        TensorBoardImage()
+        # TensorBoardImage()
     ])
