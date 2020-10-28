@@ -11,7 +11,7 @@ if __name__ == '__main__':
     if not os.path.exists(log_dir):
         os.makedirs(log_dir, exist_ok=True)
 
-    batch_size = 128
+    batch_size = 64
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=False,
