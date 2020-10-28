@@ -39,10 +39,7 @@ def get_1d_model(sr=22050, duration=8.0, n_classes=40):
         encoder,
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.3),
-        tf.keras.layers.Dense(64, activation='tanh'),
-        tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Dropout(0.3),
-        tf.keras.layers.Dense(n_classes, activation=None),
+        tf.keras.layers.Dense(96, activation=None),
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1))  # L2 normalize embeddings
     ])
     return model
@@ -78,8 +75,7 @@ def get_1d_decoder(input_shape=(96,)):
 
 def get_1d_encoder():
     i = get_spectrogram_input_layer()
-    x = tf.keras.layers.ZeroPadding2D((169, 0))(i)
-    x = TimeDistributed(layers.Conv1D(24, kernel_size=(9), activation='tanh', padding='same'))(x)
+    x = TimeDistributed(layers.Conv1D(24, kernel_size=(9), activation='tanh', padding='same'))(i)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.MaxPooling2D()(x)
     x = TimeDistributed(layers.Conv1D(48, kernel_size=(7), activation='tanh', padding='same'))(x)
@@ -93,7 +89,7 @@ def get_1d_encoder():
     x = TimeDistributed(layers.Conv1D(96, kernel_size=(3), activation='tanh', padding='same'))(x)
     x = tf.keras.layers.AveragePooling2D()(x)
     x = TimeDistributed(layers.Conv1D(96, kernel_size=(3), activation='tanh', padding='same'))(x)
-    x = tf.keras.layers.GlobalAveragePooling2D()(x)
+    x = tf.keras.layers.Flatten()(x)
 
     model = Model(inputs=i, outputs=x, name='1d_encoder')
     return model
