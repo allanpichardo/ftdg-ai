@@ -14,9 +14,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train the music model.')
     parser.add_argument('batch_size', type=int,
                         help='the batch size', default=32)
+    parser.add_argument('margin', type=float, help='The triplet loss margin', default=0.1)
     args = parser.parse_args()
 
     batch_size = args.batch_size
+    margin = args.margin
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=False,
@@ -29,7 +31,7 @@ if __name__ == '__main__':
     model = get_2d_model()
     model.compile(
         optimizer=tf.keras.optimizers.SGD(learning_rate=0.0000001),
-        loss=tfa.losses.TripletSemiHardLoss()
+        loss=tfa.losses.TripletSemiHardLoss(margin)
     )
     model.fit(train, validation_data=val, epochs=10, callbacks=[
         tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True),
