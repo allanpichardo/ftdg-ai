@@ -4,14 +4,19 @@ import datetime
 import os
 from src.sound_sequence import SoundSequence
 from src.models import get_2d_model
-from src.callbacks import TensorBoardImage
+import argparse
 
 if __name__ == '__main__':
     log_dir = os.path.join(os.path.dirname(__file__), 'logs', datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S"))
     if not os.path.exists(log_dir):
         os.makedirs(log_dir, exist_ok=True)
 
-    batch_size = 64
+    parser = argparse.ArgumentParser(description='Train the music model.')
+    parser.add_argument('batch_size', type=int,
+                        help='the batch size', default=32)
+    args = parser.parse_args()
+
+    batch_size = args.batch_size
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=False,
