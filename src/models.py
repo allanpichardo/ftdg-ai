@@ -33,7 +33,7 @@ def get_1d_autoencoder():
     return tf.keras.Sequential([enc, dec])
 
 
-def get_2d_model(sr=22050, duration=8.0):
+def get_2d_model(sr=22050, duration=8.0, n_classes=40):
     i = get_audio_layer(sr, duration)
     encoder = get_2d_encoder()
     model = tf.keras.Sequential([
@@ -41,8 +41,9 @@ def get_2d_model(sr=22050, duration=8.0):
         encoder,
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.3),
-        tf.keras.layers.Dense(96, activation=None),
-        tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1))  # L2 normalize embeddings
+        tf.keras.layers.Dense(96, activation='relu'),
+        tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
+        tf.keras.layers.Dense(n_classes, activation='softmax'),
     ])
     return model
 
