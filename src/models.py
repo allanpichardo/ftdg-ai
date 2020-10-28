@@ -36,7 +36,6 @@ def get_1d_autoencoder():
 def get_1d_model(sr=22050, duration=8.0, n_classes=40):
     encoder = get_1d_encoder()
     model = tf.keras.Sequential([
-        audio,
         encoder,
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.3),
