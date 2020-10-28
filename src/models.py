@@ -33,6 +33,18 @@ def get_1d_autoencoder():
     return tf.keras.Sequential([enc, dec])
 
 
+def get_2d_model():
+    encoder = get_2d_encoder()
+    model = tf.keras.Sequential([
+        encoder,
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Dropout(0.3),
+        tf.keras.layers.Dense(96, activation=None),
+        tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1))  # L2 normalize embeddings
+    ])
+    return model
+
+
 def get_1d_model(sr=22050, duration=8.0, n_classes=40):
     encoder = get_1d_encoder()
     model = tf.keras.Sequential([
@@ -70,6 +82,35 @@ def get_1d_decoder(input_shape=(96,)):
     x = TimeDistributed(layers.Conv1D(1, kernel_size=3, activation='tanh', padding='same'))(x)
 
     model = Model(inputs=i, outputs=x, name='1d_decoder')
+    return model
+
+
+
+def get_2d_encoder():
+    i = get_spectrogram_input_layer()
+    x = tf.keras.layers.BatchNormalization()(i)
+    x = tf.keras.layers.Conv2D(24, (5, 5), padding='same')(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.ReLU()(x)
+    x = tf.keras.layers.MaxPooling2D()(x)
+    x = tf.keras.layers.Conv2D(48, (5, 5), padding='same')(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.ReLU()(x)
+    x = tf.keras.layers.MaxPooling2D()(x)
+    x = tf.keras.layers.Conv2D(72, (5, 5), padding='same')(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.ReLU()(x)
+    x = tf.keras.layers.MaxPooling2D()(x)
+    x = tf.keras.layers.Conv2D(96, (5, 5), padding='same')(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.ReLU()(x)
+    x = tf.keras.layers.MaxPooling2D()(x)
+    x = tf.keras.layers.Conv2D(112, (5, 5), padding='same')(x)
+    x = tf.keras.layers.BatchNormalization()(x)
+    x = tf.keras.layers.ReLU()(x)
+    x = tf.keras.layers.MaxPooling2D()(x)
+    x = tf.keras.layers.Flatten()(x)
+    model = Model(inputs=i, outputs=x, name='2d_encoder')
     return model
 
 
@@ -194,9 +235,10 @@ if __name__ == '__main__':
     # model.layers[0].summary()
     # model.layers[1].summary()
     # model.summary()
-    model = get_1d_model()
+    model = get_2d_model()
     model.compile(optimizer='adam',
                   loss='categorical_crossentropy',
                   metrics=['accuracy'])
+    model.summary()
     for layer in model.layers:
         layer.summary()

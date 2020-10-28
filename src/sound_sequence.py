@@ -10,7 +10,7 @@ from sklearn.preprocessing import LabelEncoder
 
 class SoundSequence(tf.keras.utils.Sequence):
 
-    def __init__(self, music_path, sr=22050, duration=8.0, subset='training',
+    def __init__(self, music_path, sr=22050, duration=8.0, subset='training', use_categorical=True,
                  batch_size=32, is_autoencoder=False, shuffle=True, use_raw_audio=True):
         """
         Create a data generator that reads wav files from a directory
@@ -30,6 +30,7 @@ class SoundSequence(tf.keras.utils.Sequence):
         self.classes = [os.path.basename(x) for x in glob(os.path.join(music_path, subset, '*'))]
         self.n_classes = len(self.classes)
         self.use_raw_audio = use_raw_audio
+        self.use_categorical = use_categorical
 
         input_shape = (1, int(self.sr * self.duration))
         melgram = get_melspectrogram_layer(input_shape=input_shape, n_fft=1024, return_decibel=True,
@@ -56,14 +57,21 @@ class SoundSequence(tf.keras.utils.Sequence):
         labels = [self.labels[k] for k in indexes]
 
         # generate a batch of time data
-        X = np.empty((self.batch_size, 1, int(self.sr * self.duration)), dtype=np.float32)
-        Y = np.empty((self.batch_size, self.n_classes), dtype=np.float32)
+        # X = np.empty((self.batch_size, 1, int(self.sr * self.duration)), dtype=np.float32)
+        # Y = np.empty((self.batch_size, self.n_classes), dtype=np.float32)
+        X = []
+        Y = []
 
         for i, (path, label) in enumerate(zip(wav_paths, labels)):
             rate, wav = wavfile.read(path)
             wav = wav[:rate * int(self.duration)]
-            X[i,] = wav.reshape(1, -1)
-            Y[i,] = to_categorical(label, num_classes=self.n_classes)
+            X.append(wav.reshape(1, -1))
+            Y.append(to_categorical(label, num_classes=self.n_classes))
+            # X[i,] = wav.reshape(1, -1)
+            # Y[i,] = to_categorical(label, num_classes=self.n_classes)
+
+        X = np.array(X)
+        Y = np.array(labels) if not self.use_categorical else np.array(Y)
 
         if self.use_raw_audio:
             return X, Y if not self.is_autoencoder else X
@@ -72,7 +80,7 @@ class SoundSequence(tf.keras.utils.Sequence):
             return spec, Y if not self.is_autoencoder else spec
 
     def __len__(self):
-        return int(np.floor(len(self.wav_paths) / self.batch_size))
+        return int(np.ceil(len(self.wav_paths) / float(self.batch_size)))
 
     def on_epoch_end(self):
         self.indexes = np.arange(len(self.wav_paths))

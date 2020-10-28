@@ -3,7 +3,7 @@ import tensorflow_addons as tfa
 import datetime
 import os
 from src.sound_sequence import SoundSequence
-from src.models import get_1d_model, get_1d_autoencoder
+from src.models import get_2d_model
 from src.callbacks import TensorBoardImage
 
 if __name__ == '__main__':
@@ -11,19 +11,20 @@ if __name__ == '__main__':
     if not os.path.exists(log_dir):
         os.makedirs(log_dir, exist_ok=True)
 
-    train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'),
-                        shuffle=True, is_autoencoder=False, use_raw_audio=False,
-                        batch_size=8, subset='training')
+    batch_size = 128
 
-    val = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'),
+    train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=False,
-                        batch_size=8, subset='validation')
+                        batch_size=batch_size, subset='training')
 
-    model = get_1d_model(n_classes=train.n_classes)
+    val = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
+                        shuffle=True, is_autoencoder=False, use_raw_audio=False,
+                        batch_size=batch_size, subset='validation')
+
+    model = get_2d_model()
     model.compile(
-        optimizer=tf.keras.optimizers.SGD(learning_rate=0.001),
-        loss=tfa.losses.TripletSemiHardLoss(),
-        metrics=['accuracy'],
+        optimizer=tf.keras.optimizers.SGD(learning_rate=0.0000001),
+        loss=tfa.losses.TripletSemiHardLoss()
     )
     model.fit(train, validation_data=val, epochs=10, callbacks=[
         tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True),
