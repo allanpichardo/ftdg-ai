@@ -21,4 +21,4 @@ if __name__ == '__main__':
     model.fit(seq, epochs=10, callbacks=[
         tf.keras.callbacks.TensorBoard(log_dir=log_dir,write_images=True),
         TensorBoardImage()
-    ], batch_size=32, validation_split=0.1)
+    ], batch_size=32)
