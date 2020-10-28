@@ -33,9 +33,11 @@ def get_1d_autoencoder():
     return tf.keras.Sequential([enc, dec])
 
 
-def get_2d_model():
+def get_2d_model(sr=22050, duration=8.0):
+    i = get_audio_layer(sr, duration)
     encoder = get_2d_encoder()
     model = tf.keras.Sequential([
+        i,
         encoder,
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.3),

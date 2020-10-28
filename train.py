@@ -12,28 +12,32 @@ if __name__ == '__main__':
         os.makedirs(log_dir, exist_ok=True)
 
     parser = argparse.ArgumentParser(description='Train the music model.')
-    parser.add_argument('batch_size', type=int,
+    parser.add_argument('--batch_size', type=int,
                         help='the batch size', default=32)
-    parser.add_argument('margin', type=float, help='The triplet loss margin', default=0.1)
+    parser.add_argument('--margin', type=float, help='The triplet loss margin', default=1.0)
+    parser.add_argument('--lr', type=float, help='Learning rate', default=0.001)
+    parser.add_argument('--epochs', type=int, help='Training epoch amount', default=10)
     args = parser.parse_args()
 
     batch_size = args.batch_size
     margin = args.margin
+    lr = args.lr,
+    epochs = args.epochs
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
-                        shuffle=True, is_autoencoder=False, use_raw_audio=False,
+                        shuffle=True, is_autoencoder=False, use_raw_audio=True,
                         batch_size=batch_size, subset='training')
 
     val = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
-                        shuffle=True, is_autoencoder=False, use_raw_audio=False,
+                        shuffle=True, is_autoencoder=False, use_raw_audio=True,
                         batch_size=batch_size, subset='validation')
 
     model = get_2d_model()
     model.compile(
-        optimizer=tf.keras.optimizers.SGD(learning_rate=0.0000001),
+        optimizer=tf.keras.optimizers.SGD(learning_rate=lr),
         loss=tfa.losses.TripletSemiHardLoss(margin)
     )
-    model.fit(train, validation_data=val, epochs=10, callbacks=[
+    model.fit(train, validation_data=val, epochs=epochs, callbacks=[
         tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True),
         # TensorBoardImage()
     ])
