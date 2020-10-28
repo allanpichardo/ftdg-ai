@@ -6,6 +6,8 @@ class TensorBoardImage(tf.keras.callbacks.Callback):
         super().__init__()
 
     def on_epoch_end(self, epoch, logs=None):
+        if self.validation_data is None:
+            return
         # Load image
         batch = self.validation_data[0]
         X = batch[0]
