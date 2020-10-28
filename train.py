@@ -9,7 +9,7 @@ from src.callbacks import TensorBoardImage
 if __name__ == '__main__':
     log_dir = os.path.join('logs', datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S"))
     if not os.path.exists(log_dir):
-        os.makedirs(log_dir)
+        os.makedirs(log_dir, exist_ok=True)
 
     seq = SoundSequence('/Users/allanpichardo/PycharmProjects/ftdg-ai/music', shuffle=True, is_autoencoder=True, use_raw_audio=False)
     model = get_1d_autoencoder()
