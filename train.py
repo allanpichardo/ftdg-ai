@@ -1,10 +1,16 @@
 import tensorflow as tf
 import tensorflow_addons as tfa
+import datetime
+import os
 from src.sound_sequence import SoundSequence
 from src.models import get_1d_model, get_1d_autoencoder
 from src.callbacks import TensorBoardImage
 
 if __name__ == '__main__':
+    log_dir = os.path.join('logs', datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S"))
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
     seq = SoundSequence('/Users/allanpichardo/PycharmProjects/ftdg-ai/music', shuffle=True, is_autoencoder=True, use_raw_audio=False)
     model = get_1d_autoencoder()
     model.compile(
@@ -13,6 +19,6 @@ if __name__ == '__main__':
         metrics=['accuracy'],
     )
     model.fit(seq, epochs=10, callbacks=[
-        tf.keras.callbacks.TensorBoard(write_images=True),
+        tf.keras.callbacks.TensorBoard(log_dir=log_dir,write_images=True),
         TensorBoardImage()
     ])
