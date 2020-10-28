@@ -7,7 +7,7 @@ from src.models import get_1d_model, get_1d_autoencoder
 from src.callbacks import TensorBoardImage
 
 if __name__ == '__main__':
-    log_dir = os.path.join('logs', datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S"))
+    log_dir = os.path.join(os.path.realpath(__file__), 'logs', datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S"))
     if not os.path.exists(log_dir):
         os.makedirs(log_dir, exist_ok=True)
 
