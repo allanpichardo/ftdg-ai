@@ -1,5 +1,6 @@
 absl-py==0.10.0
 appdirs==1.4.4
+astor==0.8.1
 astunparse==1.6.3
 audioread==2.1.8
 cachetools==4.1.1
@@ -14,8 +15,10 @@ google-pasta==0.2.0
 grpcio==1.32.0
 h5py==2.10.0
 idna==2.10
+importlib-metadata==2.0.0
 joblib==0.17.0
 kapre==0.3.4
+Keras-Applications==1.0.8
 Keras-Preprocessing==1.1.2
 librosa==0.8.0
 llvmlite==0.34.0
@@ -26,6 +29,7 @@ oauthlib==3.1.0
 opt-einsum==3.3.0
 packaging==20.4
 Pillow==8.0.1
+pkg-resources==0.0.0
 pooch==1.2.0
 protobuf==3.13.0
 pyasn1==0.4.8
@@ -44,12 +48,14 @@ SoundFile==0.10.3.post1
 spotipy==2.16.0
 tensorboard==2.3.0
 tensorboard-plugin-wit==1.7.0
-tensorflow-gpu==2.3.1
+tensorflow==2.3.1
 tensorflow-addons==0.11.2
 tensorflow-estimator==2.3.0
+tensorflow-gpu==2.3.1
 termcolor==1.1.0
 threadpoolctl==2.1.0
 typeguard==2.10.0
 urllib3==1.25.10
 Werkzeug==1.0.1
 wrapt==1.12.1
+zipp==3.4.0
