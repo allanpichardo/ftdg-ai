@@ -99,25 +99,25 @@ def get_1d_decoder(input_shape=(96,)):
 def get_2d_encoder():
     i = get_mfcc_input_layer()
     x = tf.keras.layers.BatchNormalization()(i)
-    x = tf.keras.layers.Conv2D(16, (7, 7), padding='same', activation='tanh')(x)
+    x = tf.keras.layers.Conv2D(32, (7, 7), padding='same', activation='tanh')(x)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D()(x)
+    x = tf.keras.layers.AveragePooling2D()(x)
 
     x = tf.keras.layers.Conv2D(32, (5, 5), padding='same')(x)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D()(x)
+    x = tf.keras.layers.AveragePooling2D()(x)
 
-    x = tf.keras.layers.Conv2D(64, (3, 3), padding='same')(x)
+    x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D()(x)
+    x = tf.keras.layers.AveragePooling2D()(x)
 
-    x = tf.keras.layers.Conv2D(64, (3, 3), padding='same')(x)
+    x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.Flatten()(x)
+    x = tf.keras.layers.GlobalAveragePooling2D()(x)
     model = Model(inputs=i, outputs=x, name='2d_encoder')
     return model
 
