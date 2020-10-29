@@ -40,8 +40,8 @@ def get_2d_model(sr=22050, duration=8.0, n_classes=40):
         i,
         encoder,
         tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Dropout(0.3),
-        tf.keras.layers.Dense(96, activation='relu'),
+        tf.keras.layers.Dropout(0.2),
+        tf.keras.layers.Dense(64, activation='relu'),
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
         tf.keras.layers.Dense(n_classes, activation='softmax'),
     ])
@@ -110,7 +110,7 @@ def get_2d_encoder():
     x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.GlobalAveragePooling2D()(x)
+    x = tf.keras.layers.Flatten()(x)
     model = Model(inputs=i, outputs=x, name='2d_encoder')
     return model
 
