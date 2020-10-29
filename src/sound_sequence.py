@@ -90,7 +90,7 @@ class SoundSequence(tf.keras.utils.Sequence):
             # Y[i,] = to_categorical(label, num_classes=self.n_classes)
 
         X = np.array(X)
-        X = self.__normalize_wav(X)
+        # X = self.__normalize_wav(X)
         Y = np.array(labels) if not self.use_categorical else np.array(Y)
 
         if self.use_raw_audio:

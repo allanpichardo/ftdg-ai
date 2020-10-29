@@ -1,5 +1,6 @@
 music
 logs
+checkpoints
 .env
 .cache
 temp.mp3

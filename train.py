@@ -11,6 +11,11 @@ if __name__ == '__main__':
     if not os.path.exists(log_dir):
         os.makedirs(log_dir, exist_ok=True)
 
+    checkpoint = os.path.join(os.path.dirname(__file__), 'checkpoints', datetime.datetime.now().strftime("%d_%m_%Y_%H_%M_%S"))
+    if not os.path.exists(checkpoint):
+        os.makedirs(checkpoint, exist_ok=True)
+    checkpoint = os.path.join(checkpoint, 'checkpoint.h5')
+
     parser = argparse.ArgumentParser(description='Train the music model.')
     parser.add_argument('--batch_size', type=int,
                         help='the batch size', default=32)
@@ -40,5 +45,5 @@ if __name__ == '__main__':
     )
     model.fit(train, validation_data=val, epochs=epochs, callbacks=[
         tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True),
-        # TensorBoardImage()
+        tf.keras.callbacks.ModelCheckpoint(checkpoint, save_best_only=True, verbose=1)
     ], class_weight=train.weights)
