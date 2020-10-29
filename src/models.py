@@ -2,6 +2,7 @@ from tensorflow.keras import layers
 from tensorflow.keras.layers import TimeDistributed
 from tensorflow.keras.models import Model
 from tensorflow.keras.regularizers import l2
+from kapre.signal import LogmelToMFCC
 from kapre.composed import get_frequency_aware_conv2d, get_melspectrogram_layer
 import tensorflow as tf
 import os
@@ -22,6 +23,11 @@ def get_spectrogram_input_layer():
     return input
 
 
+def get_mfcc_input_layer():
+    input = tf.keras.layers.Input(shape=(686, 13, 1), name='spectro_input')
+    return input
+
+
 def get_wavform_input_layer(sr=22050, duration=8.0):
     input = tf.keras.layers.Input(shape=(1, int(sr * duration)))
     return input
@@ -38,10 +44,11 @@ def get_2d_model(sr=22050, duration=8.0, n_classes=40):
     encoder = get_2d_encoder()
     model = tf.keras.Sequential([
         i,
+        LogmelToMFCC(n_mfccs=13),
         encoder,
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.5),
-        tf.keras.layers.Dense(128, activation=None),
+        tf.keras.layers.Dense(96, activation=None),
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
         # tf.keras.layers.Dense(n_classes, activation='softmax'),
     ])
@@ -54,7 +61,7 @@ def get_1d_model(sr=22050, duration=8.0, n_classes=40):
         encoder,
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.5),
-        tf.keras.layers.Dense(96, activation=None),
+        tf.keras.layers.Dense(64, activation=None),
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1))  # L2 normalize embeddings
     ])
     return model
@@ -90,9 +97,9 @@ def get_1d_decoder(input_shape=(96,)):
 
 
 def get_2d_encoder():
-    i = get_spectrogram_input_layer()
+    i = get_mfcc_input_layer()
     x = tf.keras.layers.BatchNormalization()(i)
-    x = tf.keras.layers.Conv2D(8, (7, 7), padding='same', activation='tanh')(x)
+    x = tf.keras.layers.Conv2D(16, (7, 7), padding='same', activation='tanh')(x)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D()(x)
@@ -102,17 +109,17 @@ def get_2d_encoder():
     x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D()(x)
 
-    x = tf.keras.layers.Conv2D(16, (3, 3), padding='same')(x)
-    x = tf.keras.layers.BatchNormalization()(x)
-    x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D()(x)
-
     x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D()(x)
+    #
+    # x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
+    # x = tf.keras.layers.BatchNormalization()(x)
+    # x = tf.keras.layers.ReLU()(x)
+    # x = tf.keras.layers.MaxPooling2D()(x)
 
-    x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
+    x = tf.keras.layers.Conv2D(64, (3, 3), padding='same')(x)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.Flatten()(x)
@@ -247,4 +254,7 @@ if __name__ == '__main__':
                   metrics=['accuracy'])
     model.summary()
     for layer in model.layers:
-        layer.summary()
+        try:
+            layer.summary()
+        except:
+            continue
