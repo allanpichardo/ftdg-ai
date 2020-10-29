@@ -6,6 +6,8 @@ from scipy.io import wavfile
 from tensorflow.keras.utils import to_categorical
 from kapre.composed import get_melspectrogram_layer
 from sklearn.preprocessing import LabelEncoder
+from collections import Counter
+import sys
 
 
 class SoundSequence(tf.keras.utils.Sequence):
@@ -44,9 +46,21 @@ class SoundSequence(tf.keras.utils.Sequence):
         self.wav_paths = glob(os.path.join(music_path, subset, '*', '*'))
         self.labels = []
         for path in self.wav_paths:
-            self.labels.append(os.path.basename(os.path.dirname(path)))
+            real_label = os.path.basename(os.path.dirname(path))
+            self.labels.append(real_label)
 
         self.labels = le.transform(self.labels)
+        counts = Counter(self.labels)
+        min = sys.maxsize
+        for key, count in enumerate(counts):
+            if count < min:
+                min = count
+
+        cardinality = len(self.labels)
+        self.weights = {}
+        for i in range(cardinality):
+            self.weights[i] = min / counts[i] if counts[i] > 0 else 0.0
+
 
         self.on_epoch_end()
 

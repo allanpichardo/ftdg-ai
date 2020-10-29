@@ -41,4 +41,4 @@ if __name__ == '__main__':
     model.fit(train, validation_data=val, epochs=epochs, callbacks=[
         tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True),
         # TensorBoardImage()
-    ])
+    ], class_weight=train.weights)
