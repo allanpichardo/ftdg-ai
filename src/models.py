@@ -47,7 +47,7 @@ def get_2d_model(sr=22050, duration=8.0, n_classes=40):
         LogmelToMFCC(n_mfccs=13),
         encoder,
         tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Dropout(0.5),
+        tf.keras.layers.Dropout(0.3),
         tf.keras.layers.Dense(128, activation=None),
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
         # tf.keras.layers.Dense(n_classes, activation='softmax'),
@@ -99,24 +99,24 @@ def get_1d_decoder(input_shape=(96,)):
 def get_2d_encoder():
     i = get_mfcc_input_layer()
     x = tf.keras.layers.BatchNormalization()(i)
-    x = tf.keras.layers.Conv2D(8, (7, 7), padding='same', activation='tanh')(x)
+    x = tf.keras.layers.Conv2D(256, (7, 7), padding='same', activation='tanh')(x)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.AveragePooling2D()(x)
-
-    x = tf.keras.layers.Conv2D(16, (5, 5), padding='same')(x)
-    x = tf.keras.layers.BatchNormalization()(x)
-    x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.AveragePooling2D()(x)
-
-    x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
-    x = tf.keras.layers.BatchNormalization()(x)
-    x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.AveragePooling2D()(x)
-
-    x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
-    x = tf.keras.layers.BatchNormalization()(x)
-    x = tf.keras.layers.ReLU()(x)
+    # x = tf.keras.layers.AveragePooling2D()(x)
+    #
+    # x = tf.keras.layers.Conv2D(16, (5, 5), padding='same')(x)
+    # x = tf.keras.layers.BatchNormalization()(x)
+    # x = tf.keras.layers.ReLU()(x)
+    # x = tf.keras.layers.AveragePooling2D()(x)
+    #
+    # x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
+    # x = tf.keras.layers.BatchNormalization()(x)
+    # x = tf.keras.layers.ReLU()(x)
+    # x = tf.keras.layers.AveragePooling2D()(x)
+    #
+    # x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
+    # x = tf.keras.layers.BatchNormalization()(x)
+    # x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.GlobalAveragePooling2D()(x)
     model = Model(inputs=i, outputs=x, name='2d_encoder')
     return model
