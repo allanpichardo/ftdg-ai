@@ -64,6 +64,11 @@ class SoundSequence(tf.keras.utils.Sequence):
 
         self.on_epoch_end()
 
+    def __normalize_wav(self, wav):
+        min = -32768
+        max = 32767
+        return (wav - min) / (max - min)
+
     def __getitem__(self, index):
         indexes = self.indexes[index * self.batch_size:(index + 1) * self.batch_size]
 
@@ -85,6 +90,7 @@ class SoundSequence(tf.keras.utils.Sequence):
             # Y[i,] = to_categorical(label, num_classes=self.n_classes)
 
         X = np.array(X)
+        X = self.__normalize_wav(X)
         Y = np.array(labels) if not self.use_categorical else np.array(Y)
 
         if self.use_raw_audio:
