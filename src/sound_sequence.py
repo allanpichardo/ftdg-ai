@@ -52,13 +52,12 @@ class SoundSequence(tf.keras.utils.Sequence):
         self.labels = le.transform(self.labels)
         counts = Counter(self.labels)
         min = sys.maxsize
-        for key, count in enumerate(counts):
+        for key, count in counts.items():
             if count < min:
                 min = count
 
-        cardinality = len(self.labels)
         self.weights = {}
-        for i in range(cardinality):
+        for i in range(self.n_classes):
             self.weights[i] = min / counts[i] if counts[i] > 0 else 0.0
 
 
