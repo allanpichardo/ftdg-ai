@@ -48,7 +48,7 @@ def get_2d_model(sr=22050, duration=8.0, n_classes=40):
         encoder,
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.5),
-        tf.keras.layers.Dense(96, activation=None),
+        tf.keras.layers.Dense(128, activation=None),
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
         # tf.keras.layers.Dense(n_classes, activation='softmax'),
     ])
@@ -104,20 +104,15 @@ def get_2d_encoder():
     x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D()(x)
 
-    x = tf.keras.layers.Conv2D(16, (5, 5), padding='same')(x)
+    x = tf.keras.layers.Conv2D(32, (5, 5), padding='same')(x)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D()(x)
 
-    x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
+    x = tf.keras.layers.Conv2D(64, (3, 3), padding='same')(x)
     x = tf.keras.layers.BatchNormalization()(x)
     x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D()(x)
-    #
-    # x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
-    # x = tf.keras.layers.BatchNormalization()(x)
-    # x = tf.keras.layers.ReLU()(x)
-    # x = tf.keras.layers.MaxPooling2D()(x)
 
     x = tf.keras.layers.Conv2D(64, (3, 3), padding='same')(x)
     x = tf.keras.layers.BatchNormalization()(x)

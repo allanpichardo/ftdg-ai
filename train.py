@@ -41,7 +41,7 @@ if __name__ == '__main__':
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
         loss=tfa.losses.TripletSemiHardLoss(margin),
-        # metrics=['accuracy']
+        metrics=['accuracy']
     )
     model.fit(train, validation_data=val, epochs=epochs, callbacks=[
         tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True),
