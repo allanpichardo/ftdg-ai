@@ -98,40 +98,40 @@ def get_1d_decoder(input_shape=(96,)):
 
 def get_2d_encoder():
     input = get_mfcc_input_layer()
-    x = tf.keras.layers.Conv2D(8, (7, 7), padding='same', activation='tanh')(input)
+    x = tf.keras.layers.Conv2D(32, (7, 7), padding='same', activation='tanh')(input)
     x = tf.keras.layers.BatchNormalization()(x)
     for i in range(6):
-        x = tf.keras.layers.Conv2D(8, (7, 7), padding='same')(x)
+        x = tf.keras.layers.Conv2D(32, (7, 7), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D()(x)
 
     for i in range(6):
-        x = tf.keras.layers.Conv2D(8, (5, 5), padding='same')(x)
+        x = tf.keras.layers.Conv2D(32, (5, 5), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D()(x)
 
     for i in range(6):
-        x = tf.keras.layers.Conv2D(8, (3, 3), padding='same')(x)
+        x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D()(x)
 
     for i in range(6):
-        x = tf.keras.layers.Conv2D(8, (3, 3), padding='same')(x)
+        x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D((2, 1))(x)
 
     for i in range(6):
-        x = tf.keras.layers.Conv2D(8, (3, 3), padding='same')(x)
+        x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D((2, 1))(x)
 
     for i in range(6):
-        x = tf.keras.layers.Conv2D(8, (3, 3), padding='same')(x)
+        x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D((2, 1))(x)
