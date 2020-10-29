@@ -40,6 +40,7 @@ def get_2d_model(sr=22050, duration=8.0, n_classes=40):
         i,
         encoder,
         tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Dense(64, activity_regularizer=l2(0.001), activation='relu'),
         tf.keras.layers.Dropout(0.5),
         tf.keras.layers.Dense(64, activity_regularizer=l2(0.001), activation='relu'),
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
