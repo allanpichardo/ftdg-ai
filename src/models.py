@@ -43,7 +43,7 @@ def get_2d_model(sr=22050, duration=8.0, n_classes=40):
         tf.keras.layers.Dropout(0.2),
         tf.keras.layers.Dense(64, activity_regularizer=l2(0.001), activation='linear'),
         tf.keras.layers.ReLU(),
-        tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
+        # tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
         tf.keras.layers.Dense(n_classes, activation='softmax'),
     ])
     return model
