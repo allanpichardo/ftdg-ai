@@ -19,7 +19,7 @@ output_directory = None
 
 def get_previews_from_playlist(uri):
     previews = []
-    playlist = spotify.playlist(uri, market='ES')
+    playlist = spotify.playlist(uri)
     tracks = playlist['tracks']
     while tracks['next']:
         tracks = spotify.next(tracks)
@@ -83,7 +83,6 @@ def main():
 
     load_dotenv()
     scope = "user-library-read"
-    # auth_manager = SpotifyClientCredentials()
     auth_manager = SpotifyOAuth(scope=scope)
     spotify = spotipy.Spotify(auth_manager=auth_manager)
 
@@ -91,7 +90,7 @@ def main():
     #     playlists = json.load(file)
     #     get_all_playlists(playlists)
 
-    previews = get_previews_from_playlist('spotify:playlist:38bzETkEYJNkcR8vhqMlMz')
+    previews = get_previews_from_playlist("spotify:playlist:37i9dQZF1DZ06evO3MGNG8")
     print(previews)
 
 

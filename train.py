@@ -3,7 +3,7 @@ import tensorflow_addons as tfa
 import datetime
 import os
 from src.sound_sequence import SoundSequence
-from src.models import get_2d_model
+from src.models import get_vgg_triplet
 import argparse
 
 if __name__ == '__main__':
@@ -29,18 +29,18 @@ if __name__ == '__main__':
     lr = args.lr
     epochs = args.epochs
 
-    train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=True,
+    train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
                         batch_size=batch_size, subset='training')
 
-    val = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=True,
+    val = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
                         batch_size=batch_size, subset='validation')
 
-    model = get_2d_model()
+    model = get_vgg_triplet()
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
-        loss=tf.losses.CategoricalCrossentropy(),
+        loss=tfa.losses.TripletSemiHardLoss(margin=margin),
         metrics=['accuracy']
     )
     model.fit(train, validation_data=val, epochs=epochs, callbacks=[
