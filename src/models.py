@@ -88,20 +88,6 @@ def get_2d_encoder():
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D((2, 1))(x)
-    #
-    # x = tf.keras.layers.Conv2D(16, (5, 5), padding='same')(x)
-    # x = tf.keras.layers.BatchNormalization()(x)
-    # x = tf.keras.layers.ReLU()(x)
-    # x = tf.keras.layers.AveragePooling2D()(x)
-    #
-    # x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
-    # x = tf.keras.layers.BatchNormalization()(x)
-    # x = tf.keras.layers.ReLU()(x)
-    # x = tf.keras.layers.AveragePooling2D()(x)
-    #
-    # x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
-    # x = tf.keras.layers.BatchNormalization()(x)
-    # x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.Flatten()(x)
     model = Model(inputs=input, outputs=x, name='2d_encoder')
     return model
@@ -119,6 +105,23 @@ def get_vgg_triplet(sr=22050, duration=8.0, embedding_size=128):
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
     ])
     return model
+
+
+def get_embedding_classifier(embedding_size=128, n_classes=40):
+    model = tf.keras.Sequential([
+        tf.keras.Input(shape=(embedding_size,)),
+        tf.keras.layers.Dense(embedding_size),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.ReLU(),
+        tf.keras.layers.Dropout(0.5),
+        tf.keras.layers.Dense(embedding_size // 2),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.ReLU(),
+        tf.keras.layers.Dropout(0.5),
+        tf.keras.layers.Dense(n_classes, activation='softmax')
+    ])
+    return model
+
 
 def get_resnet_triplet(sr=22050, duration=8.0, embedding_size=128):
     stride = 1
@@ -165,5 +168,5 @@ def res_layer(x, filters, pooling=False, dropout=0.0, stride=1, channel_axis=3):
 
 
 if __name__ == '__main__':
-    model = get_vgg_triplet()
+    model = get_embedding_classifier()
     model.summary()
