@@ -3,7 +3,7 @@ import tensorflow_addons as tfa
 import datetime
 import os
 from src.sound_sequence import SoundSequence
-from src.models import get_vgg_triplet
+from src.models import get_efficientnet_triplet
 import argparse
 
 if __name__ == '__main__':
@@ -34,7 +34,7 @@ if __name__ == '__main__':
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
                         batch_size=batch_size, subset='training')
 
-    model = get_vgg_triplet()
+    model = get_efficientnet_triplet()
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
         loss=tfa.losses.TripletSemiHardLoss(margin=margin),
