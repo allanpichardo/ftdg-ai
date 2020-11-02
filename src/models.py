@@ -52,44 +52,37 @@ def get_classifier_model(sr=22050, duration=8.0, n_classes=40):
 
 def get_2d_encoder():
     input = get_spectrogram_input_layer()
-    x = tf.keras.layers.Conv2D(32, (7, 7), padding='same', activation='tanh')(input)
+    x = tf.keras.layers.Conv2D(64, (3, 3), padding='same', activation='tanh')(input)
     x = tf.keras.layers.BatchNormalization()(x)
     for i in range(2):
-        x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
+        x = tf.keras.layers.Conv2D(64, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D()(x)
+    x = tf.keras.layers.AveragePooling2D()(x)
 
     for i in range(2):
-        x = tf.keras.layers.Conv2D(64, (3, 3), padding='same')(x)
+        x = tf.keras.layers.Conv2D(128, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D()(x)
-
-    for i in range(4):
-        x = tf.keras.layers.Conv2D(64, (3, 3), padding='same')(x)
-        x = tf.keras.layers.BatchNormalization()(x)
-        x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D()(x)
+    x = tf.keras.layers.AveragePooling2D()(x)
 
     for i in range(4):
         x = tf.keras.layers.Conv2D(128, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D((2, 2))(x)
-
-    for i in range(4):
-        x = tf.keras.layers.Conv2D(128, (3, 3), padding='same')(x)
-        x = tf.keras.layers.BatchNormalization()(x)
-        x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D((2, 2))(x)
+    x = tf.keras.layers.AveragePooling2D()(x)
 
     for i in range(4):
         x = tf.keras.layers.Conv2D(256, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D((2, 2))(x)
-    x = tf.keras.layers.Flatten()(x)
+    x = tf.keras.layers.AveragePooling2D((2, 2))(x)
+
+    for i in range(4):
+        x = tf.keras.layers.Conv2D(512, (3, 3), padding='same')(x)
+        x = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.ReLU()(x)
+    x = tf.keras.layers.GlobalAveragePooling2D()(x)
     model = Model(inputs=input, outputs=x, name='2d_encoder')
     return model
 

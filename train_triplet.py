@@ -24,6 +24,7 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', type=int, help='Training epoch amount', default=10)
     parser.add_argument('--checkpoint', type=str, help='Load weights from checkpoint file', default=checkpoint)
     parser.add_argument('--embedding_dim', type=int, help='Size of output embedding', default=256)
+    parser.add_argument('--freeze', type=bool, help='Freeze weights?', default=False)
     args = parser.parse_args()
 
     batch_size = args.batch_size
@@ -31,6 +32,7 @@ if __name__ == '__main__':
     lr = args.lr
     epochs = args.epochs
     embedding_dim = args.embedding_dim
+    freeze = args.freeze
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
@@ -42,8 +44,9 @@ if __name__ == '__main__':
         loss=tfa.losses.TripletSemiHardLoss(margin=margin),
     )
 
-    for layer in model.get_layer('efficientnetb0').layers:
-        layer.trainable = False
+    if freeze:
+        for layer in model.get_layer('efficientnetb0').layers:
+            layer.trainable = False
 
     if os.path.exists(checkpoint):
         print("Loading weights from checkpoint {}".format(checkpoint))
@@ -53,4 +56,4 @@ if __name__ == '__main__':
         tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True),
         tf.keras.callbacks.ModelCheckpoint(checkpoint, verbose=1),
         tf.keras.callbacks.EarlyStopping(monitor='loss', verbose=1, patience=5, mode=min)
-    ], class_weight=train.weights)
+    ])
