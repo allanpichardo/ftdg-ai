@@ -40,6 +40,9 @@ if __name__ == '__main__':
         loss=tfa.losses.TripletSemiHardLoss(margin=margin),
     )
 
+    for layer in model.get_layer('efficientnetb0').layers:
+        layer.trainable = False
+
     if os.path.exists(checkpoint):
         print("Loading weights from checkpoint {}".format(checkpoint))
         model.load_weights(checkpoint)
