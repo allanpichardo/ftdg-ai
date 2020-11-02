@@ -110,11 +110,7 @@ def get_vgg_triplet(sr=22050, duration=8.0, embedding_size=128):
 def get_embedding_classifier(embedding_size=128, n_classes=40):
     model = tf.keras.Sequential([
         tf.keras.Input(shape=(embedding_size,)),
-        tf.keras.layers.Dense(embedding_size),
-        tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.ReLU(),
-        tf.keras.layers.Dropout(0.5),
-        tf.keras.layers.Dense(embedding_size // 2),
+        tf.keras.layers.Dense(embedding_size * 3 // 4),
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.ReLU(),
         tf.keras.layers.Dropout(0.5),

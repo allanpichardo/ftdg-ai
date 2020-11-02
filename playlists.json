@@ -30,22 +30,118 @@
     "spotify:playlist:65oc5LvruOwGXILEu7w5p8",
     "spotify:playlist:58TxyzEcvj05SUiMiNrfFQ",
     "spotify:playlist:61B1ugw17a0Cwl3kYS8rug",
-    "spotify:playlist:5TJt2imxN9hwF9wGxDP7GR"
+    "spotify:playlist:5TJt2imxN9hwF9wGxDP7GR",
+    "spotify:playlist:6qu37CqWnpFDUFsJDAdHdJ"
   ],
   "Baltimore": [
     "spotify:playlist:37i9dQZF1DZ06evO1N21Xv",
     "spotify:playlist:37i9dQZF1DZ06evO4uudbt",
     "spotify:playlist:37i9dQZF1DZ06evNZXrWHH",
-    "spotify:playlist:7zTre8UtBKsLnIFOtJ6Emv"
+    "spotify:playlist:7zTre8UtBKsLnIFOtJ6Emv",
+    "spotify:playlist:2Wz8lnmK2hb6rqeZ799vkL"
   ],
   "Atlanta": [
     "spotify:playlist:5JRjybrq5nMUfm4TAXr98a",
     "spotify:playlist:7jBoP3YTySyTK2GddYUyn0",
     "spotify:playlist:7gr5RdSto4AkDdHJCmwIyi",
     "spotify:playlist:37i9dQZF1DWVT93EW7kPT9",
-    "spotify:playlist:37i9dQZF1DZ06evO3LmeyW"
+    "spotify:playlist:37i9dQZF1DZ06evO3LmeyW",
+    "spotify:playlist:63lCcDlqFl3tge6AsR9CJu",
+    "spotify:playlist:5lxyguL6xHH8m7ysYYbu0p",
+    "spotify:playlist:37i9dQZF1DZ06evO1ahqM0",
+    "spotify:playlist:37i9dQZF1DX33xJXQeubN7",
+    "spotify:playlist:37i9dQZF1DWYok9l1JL7GM"
   ],
   "New Orleans": [
-
+    "spotify:playlist:37i9dQZF1DZ06evO2Uoa1p",
+    "spotify:playlist:37i9dQZF1DXd5zBnarWcy8",
+    "spotify:playlist:37i9dQZF1DXbLsFIeybF20",
+    "spotify:playlist:7dCuTc8bUEK3q0uyP1Cvkx",
+    "spotify:playlist:404DLMIHHlkvZ97HchyI0S"
+  ],
+  "Puerto Rico": [
+    "spotify:playlist:7xVYxNoNiVgbqIeHomNG8s",
+    "spotify:playlist:49mdBnWvfgtHXx3q2vuKRR",
+    "spotify:playlist:0wht1BigKg6fhHQ1SqsPT7",
+    "spotify:playlist:2YAIcHm9PJ3X2aSbv4i5fm",
+    "spotify:playlist:37i9dQZF1DZ06evO2gu6S4"
+  ],
+  "Colombia": [
+    "spotify:playlist:5sQhZoHqliATgAWG4OypRS",
+    "spotify:playlist:37i9dQZF1DZ06evO3fVtxh",
+    "spotify:playlist:3XUcnPXjvejUdKk6mDD41a",
+    "spotify:playlist:37i9dQZF1DZ06evO3F8MMO"
+  ],
+  "Dominican Republic": [
+    "spotify:playlist:37i9dQZF1DWSUo7EWzIcjZ",
+    "spotify:playlist:32PYWfnWbRi2KH4orcWFLC",
+    "spotify:playlist:37i9dQZF1DZ06evO0ERupu",
+    "spotify:playlist:37i9dQZF1DX65py6HnnlE1",
+    "spotify:playlist:37i9dQZF1DZ06evO0MLcpW",
+    "spotify:playlist:37i9dQZF1DWU3iv5mH3inV"
+  ],
+  "Barbados": [
+    "spotify:playlist:54BB3CvQspNv0lLpDXoocB"
+  ],
+  "Jamaica": [
+    "spotify:playlist:0UEN17W3D8q7PI2mTySIIE",
+    "spotify:playlist:37i9dQZF1DXcYHsRTcIw5a",
+    "spotify:playlist:37i9dQZF1DZ06evO0VCCPG",
+    "spotify:playlist:37i9dQZF1DZ06evO14crqc",
+    "spotify:playlist:6RMoIh0N6NPokXLKV6AyUX",
+    "spotify:playlist:6EPMDTs3gdyf5lwcfuKuht"
+  ],
+  "Trinidad and Tobago": [
+    "spotify:playlist:37i9dQZF1DX6QlnUtJCO12",
+    "spotify:playlist:4q7hjHfqgAU3nyy8MellpU",
+    "spotify:playlist:37i9dQZF1DZ06evO4xN58f",
+    "spotify:playlist:37i9dQZF1DZ06evO2O29T6",
+    "spotify:playlist:37i9dQZF1DWW7BONj8RiqI"
+  ],
+  "Honduras": [
+    "spotify:playlist:6B0zFzhCSUBrslpl8hEmkm",
+    "spotify:playlist:7EKxGDP79snHx4iBZzSJtV",
+    "spotify:playlist:6AJMB6pPyc5Vu7A4h6I3k3"
+  ],
+  "Haiti": [
+    "spotify:playlist:1nDIOmyRUTXdSfDDHLzArl",
+    "spotify:playlist:3aOwEGgMJzXFavHMYGAmhN",
+    "spotify:playlist:5R76bPvJENUGpCIZElPRy8",
+    "spotify:playlist:0v8IyucFZoKVG12zjpLuw7",
+    "spotify:playlist:37i9dQZF1DZ06evO0EJSFf"
+  ],
+  "Senegal": [
+    "spotify:playlist:37i9dQZF1DZ06evO4cBPbt",
+    "spotify:playlist:7IxhHv7RNFC6HjkiTtsizn",
+    "spotify:playlist:7tL2VcgMGSOz7XtDqBu9Ks",
+    "spotify:playlist:37i9dQZF1DZ06evO32xgJy",
+    "spotify:playlist:37i9dQZF1DZ06evO2qvilW"
+  ],
+  "Ghana": [
+    "spotify:playlist:37i9dQZF1DZ06evO0yBLb0",
+    "spotify:playlist:37i9dQZF1DZ06evO2w727R",
+    "spotify:playlist:37i9dQZF1DZ06evO1iho2e",
+    "spotify:playlist:6o41S3XAljUjsdEoBCFQin",
+    "spotify:playlist:79bpHz55niTcASVofMdWPq",
+    "spotify:playlist:37i9dQZF1DZ06evO3rpn0s"
+  ],
+  "Angola": [
+    "spotify:playlist:2MgBvsf05cNaAGzQlxdkmN",
+    "spotify:playlist:7H4QsN8UxF1nMKprOlsa2r",
+    "spotify:playlist:37i9dQZF1DZ06evO0m3xqN",
+    "spotify:playlist:37i9dQZF1DX1l6qs3gcM4U"
+  ],
+  "Benin": [
+    "spotify:playlist:3IoIyB7VqXkYB8NPRq4o95",
+    "spotify:playlist:37i9dQZF1DZ06evO04obq4"
+  ],
+  "Nigeria": [
+    "spotify:playlist:1HK60ZSZGOz9xikEadxV11",
+    "spotify:playlist:5QjHY0zUah8M8A0eVc1cbt",
+    "spotify:playlist:3WkO9LuHsdrxKpSS8h384H",
+    "spotify:playlist:2oVELTYOEuDmvP3cysPn0U",
+    "spotify:playlist:37i9dQZF1DXajE2Hhh3n7i",
+    "spotify:playlist:27uBWz4wmnUWDH6OSFw0Ec",
+    "spotify:playlist:7FeiwIbkLYHSB2uIl0aHcJ"
   ]
 }
