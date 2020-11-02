@@ -100,6 +100,7 @@ def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=128):
     model = tf.keras.Sequential([
         i,
         tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.Conv2D(3, (3,3), padding='same'),
         en,
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.3),
