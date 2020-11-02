@@ -54,31 +54,31 @@ def get_2d_encoder():
     input = get_spectrogram_input_layer()
     x = tf.keras.layers.Conv2D(64, (3, 3), padding='same', activation='tanh')(input)
     x = tf.keras.layers.BatchNormalization()(x)
-    for i in range(2):
+    for i in range(1):
         x = tf.keras.layers.Conv2D(64, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.AveragePooling2D()(x)
 
-    for i in range(2):
+    for i in range(1):
         x = tf.keras.layers.Conv2D(128, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.AveragePooling2D()(x)
 
-    for i in range(4):
+    for i in range(1):
         x = tf.keras.layers.Conv2D(128, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.AveragePooling2D()(x)
 
-    for i in range(4):
+    for i in range(1):
         x = tf.keras.layers.Conv2D(256, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.AveragePooling2D((2, 2))(x)
 
-    for i in range(4):
+    for i in range(1):
         x = tf.keras.layers.Conv2D(512, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
@@ -113,8 +113,6 @@ def get_vgg_triplet(sr=22050, duration=8.0, embedding_size=128):
         tf.keras.layers.BatchNormalization(),
         encoder,
         tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Dropout(0.3),
-        tf.keras.layers.Dense(4000, activation='relu'),
         tf.keras.layers.Dropout(0.3),
         tf.keras.layers.Dense(embedding_size, activation=None),
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
@@ -179,6 +177,6 @@ def res_layer(x, filters, pooling=False, dropout=0.0, stride=1, channel_axis=3):
 
 
 if __name__ == '__main__':
-    model = get_efficientnet_triplet()
+    model = get_vgg_triplet()
     # model.layers[2].summary()
     model.summary()

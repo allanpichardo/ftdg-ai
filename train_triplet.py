@@ -3,7 +3,7 @@ import tensorflow_addons as tfa
 import datetime
 import os
 from src.sound_sequence import SoundSequence
-from src.models import get_efficientnet_triplet
+from src.models import get_efficientnet_triplet, get_vgg_triplet
 import argparse
 
 if __name__ == '__main__':
@@ -25,6 +25,7 @@ if __name__ == '__main__':
     parser.add_argument('--checkpoint', type=str, help='Load weights from checkpoint file', default=checkpoint)
     parser.add_argument('--embedding_dim', type=int, help='Size of output embedding', default=256)
     parser.add_argument('--freeze', type=bool, help='Freeze weights?', default=False)
+    parser.add_argument('--architecture', type=str, help='CNN architecture: vgg or efficientnet', default='efficientnet')
     args = parser.parse_args()
 
     batch_size = args.batch_size
@@ -33,18 +34,19 @@ if __name__ == '__main__':
     epochs = args.epochs
     embedding_dim = args.embedding_dim
     freeze = args.freeze
+    architecture = args.architecture
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
                         batch_size=batch_size, subset='training')
 
-    model = get_efficientnet_triplet(embedding_size=embedding_dim)
+    model = get_efficientnet_triplet(embedding_size=embedding_dim) if architecture == 'efficientnet' else get_vgg_triplet(embedding_size=embedding_dim)
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=lr),
         loss=tfa.losses.TripletSemiHardLoss(margin=margin),
     )
 
-    if freeze:
+    if freeze and architecture == 'efficientnet':
         for layer in model.get_layer('efficientnetb0').layers:
             layer.trainable = False
 
