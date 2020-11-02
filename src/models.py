@@ -99,11 +99,9 @@ def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=128):
     en = tf.keras.applications.efficientnet.EfficientNetB0(include_top=False, input_shape=(341, 128, 3), pooling='max', weights='imagenet')
     model = tf.keras.Sequential([
         i,
-        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.LayerNormalization(),
         tf.keras.layers.Conv2D(3, (3,3), padding='same'),
         en,
-        tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Dropout(0.3),
         tf.keras.layers.Dense(embedding_size, activation=None),
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
     ])
