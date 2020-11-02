@@ -13,7 +13,7 @@ import os
 def get_audio_layer(SR=22050, DT=8.0):
     input_shape = (1, int(SR * DT))
     melgram = get_melspectrogram_layer(input_shape=input_shape, n_fft=2048, hop_length=512, mel_f_min=60.0,
-                                       mel_f_max=10000.0, return_decibel=True,
+                                       mel_f_max=8000.0, return_decibel=True,
                                        n_mels=128, sample_rate=SR, input_data_format='channels_first',
                                        output_data_format='channels_last')
     return melgram
