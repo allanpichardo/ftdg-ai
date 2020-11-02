@@ -12,37 +12,37 @@ import os
 
 def get_audio_layer(SR=22050, DT=8.0):
     input_shape = (1, int(SR * DT))
-    melgram_r = get_melspectrogram_layer(input_shape=input_shape, n_fft=2048, hop_length=10, mel_f_min=60.0,
-                                       mel_f_max=8000.0, return_decibel=True, win_length=25,
+    melgram_r = get_melspectrogram_layer(input_shape=input_shape, n_fft=2048, hop_length=128, mel_f_min=60.0,
+                                       mel_f_max=8000.0, return_decibel=True, win_length=512,
                                        n_mels=128, sample_rate=SR, input_data_format='channels_first',
                                        output_data_format='channels_last', name='melspectrogram_r')
-    melgram_g = get_melspectrogram_layer(input_shape=input_shape, n_fft=2048, hop_length=25, mel_f_min=60.0,
-                                         mel_f_max=8000.0, return_decibel=True, win_length=50,
+    melgram_g = get_melspectrogram_layer(input_shape=input_shape, n_fft=2048, hop_length=256, mel_f_min=60.0,
+                                         mel_f_max=8000.0, return_decibel=True, win_length=1024,
                                          n_mels=128, sample_rate=SR, input_data_format='channels_first',
                                          output_data_format='channels_last', name='melspectrogram_g')
-    melgram_b = get_melspectrogram_layer(input_shape=input_shape, n_fft=2048, hop_length=50, mel_f_min=60.0,
-                                         mel_f_max=8000.0, return_decibel=True, win_length=100,
+    melgram_b = get_melspectrogram_layer(input_shape=input_shape, n_fft=2048, hop_length=512, mel_f_min=60.0,
+                                         mel_f_max=8000.0, return_decibel=True, win_length=2048,
                                          n_mels=128, sample_rate=SR, input_data_format='channels_first',
                                          output_data_format='channels_last', name='melspectrogram_b')
     i = tf.keras.layers.Input(shape=input_shape)
     r = melgram_r(i)
-    r = tf.keras.layers.Cropping2D(((1, 0), (0, 0)))(r)
+    r = tf.keras.layers.Cropping2D((345, 0))(r)
     g = melgram_g(i)
-    g = tf.keras.layers.ZeroPadding2D((5291, 0))(g)
+    g = tf.keras.layers.Cropping2D(((1, 0), (0, 0)))(g)
     b = melgram_b(i)
-    b = tf.keras.layers.ZeroPadding2D((7055, 0))(b)
+    b = tf.keras.layers.ZeroPadding2D((172, 0))(b)
     x = tf.keras.layers.Concatenate()([r, g, b])
     return Model(inputs=i, outputs=x, name='triple_spectrogram')
 
 
 
 def get_spectrogram_input_layer():
-    input = tf.keras.layers.Input(shape=(17637, 128, 3), name='spectro_input')
+    input = tf.keras.layers.Input(shape=(685, 128, 3), name='spectro_input')
     return input
 
 
 def get_mfcc_input_layer():
-    input = tf.keras.layers.Input(shape=(341, 13, 1), name='spectro_input')
+    input = tf.keras.layers.Input(shape=(685, 13, 1), name='spectro_input')
     return input
 
 
@@ -107,7 +107,7 @@ def get_2d_encoder():
 def get_inception_resnet_triplet(sr=22050, duration=8.0, embedding_size=256):
     i = get_audio_layer(sr, duration)
     inception = tf.keras.applications.inception_resnet_v2.InceptionResNetV2(
-        include_top=False, input_shape=(17637, 128, 3), pooling='avg'
+        include_top=False, input_shape=(685, 128, 3), pooling='avg'
     )
     model = tf.keras.Sequential([
         i,
@@ -124,7 +124,7 @@ def get_inception_resnet_triplet(sr=22050, duration=8.0, embedding_size=256):
 def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
     i = get_audio_layer(sr, duration)
     en = tf.keras.applications.efficientnet.EfficientNetB0(include_top=False,
-                                                           input_shape=(17637, 128, 3),
+                                                           input_shape=(685, 128, 3),
                                                            pooling='avg',
                                                            weights='imagenet')
     model = tf.keras.Sequential([
@@ -211,11 +211,6 @@ def res_layer(x, filters, pooling=False, dropout=0.0, stride=1, channel_axis=3):
 
 
 if __name__ == '__main__':
-    model = get_inception_resnet_triplet()
-    for layer in model.layers:
-        try:
-            layer.summary()
-        except:
-            continue
-    # model.summary()
+    model = get_efficientnet_triplet()
+    model.summary()
     # print(model.output_shape)
