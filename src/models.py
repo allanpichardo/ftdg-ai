@@ -12,19 +12,20 @@ import os
 
 def get_audio_layer(SR=22050, DT=8.0):
     input_shape = (1, int(SR * DT))
-    melgram = get_melspectrogram_layer(input_shape=input_shape, n_fft=1024, return_decibel=True,
-                                       n_mels=96, sample_rate=SR, input_data_format='channels_first',
+    melgram = get_melspectrogram_layer(input_shape=input_shape, n_fft=2048, hop_length=512, mel_f_min=60.0,
+                                       mel_f_max=10000.0, return_decibel=True,
+                                       n_mels=128, sample_rate=SR, input_data_format='channels_first',
                                        output_data_format='channels_last')
     return melgram
 
 
 def get_spectrogram_input_layer():
-    input = tf.keras.layers.Input(shape=(686, 96, 1), name='spectro_input')
+    input = tf.keras.layers.Input(shape=(341, 128, 1), name='spectro_input')
     return input
 
 
 def get_mfcc_input_layer():
-    input = tf.keras.layers.Input(shape=(686, 13, 1), name='spectro_input')
+    input = tf.keras.layers.Input(shape=(341, 13, 1), name='spectro_input')
     return input
 
 
@@ -75,19 +76,19 @@ def get_2d_encoder():
         x = tf.keras.layers.Conv2D(128, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D((2, 1))(x)
+    x = tf.keras.layers.MaxPooling2D((2, 2))(x)
 
     for i in range(4):
         x = tf.keras.layers.Conv2D(128, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D((2, 1))(x)
+    x = tf.keras.layers.MaxPooling2D((2, 2))(x)
 
     for i in range(4):
         x = tf.keras.layers.Conv2D(256, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D((2, 1))(x)
+    x = tf.keras.layers.MaxPooling2D((2, 2))(x)
     x = tf.keras.layers.Flatten()(x)
     model = Model(inputs=input, outputs=x, name='2d_encoder')
     return model
@@ -98,6 +99,7 @@ def get_vgg_triplet(sr=22050, duration=8.0, embedding_size=128):
     encoder = get_2d_encoder()
     model = tf.keras.Sequential([
         i,
+        tf.keras.layers.BatchNormalization(),
         encoder,
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.3),
@@ -164,5 +166,6 @@ def res_layer(x, filters, pooling=False, dropout=0.0, stride=1, channel_axis=3):
 
 
 if __name__ == '__main__':
-    model = get_embedding_classifier()
+    model = get_vgg_triplet()
+    model.layers[2].summary()
     model.summary()
