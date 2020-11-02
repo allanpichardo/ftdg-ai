@@ -94,15 +94,21 @@ def get_2d_encoder():
     return model
 
 
-def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=128):
+def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
     i = get_audio_layer(sr, duration)
-    en = tf.keras.applications.efficientnet.EfficientNetB0(include_top=False, input_shape=(341, 128, 3), weights='imagenet')
+    en = tf.keras.applications.efficientnet.EfficientNetB0(include_top=False,
+                                                           input_shape=(341, 128, 3),
+                                                           pooling='avg',
+                                                           weights='imagenet')
     model = tf.keras.Sequential([
         i,
         tf.keras.layers.LayerNormalization(),
         tf.keras.layers.Conv2D(3, (3, 3), padding='same'),
         en,
-        tf.keras.layers.Flatten(),
+        tf.keras.layers.Dense(1024),
+        tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.ReLU(),
+        tf.keras.layers.Dropout(0.2),
         tf.keras.layers.Dense(embedding_size, activation=None),
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
     ])
