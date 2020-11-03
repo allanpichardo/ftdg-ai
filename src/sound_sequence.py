@@ -108,9 +108,17 @@ class SoundSequence(tf.keras.utils.Sequence):
 
 
 if __name__ == '__main__':
-    seq = SoundSequence('/Users/allanpichardo/PycharmProjects/ftdg-ai/music', is_autoencoder=True, batch_size=1, use_raw_audio=False)
-    batch = seq.__getitem__(0)
-    sample = batch[0]
-    from src.models import get_minmax_normalize_layer
-    normed = get_minmax_normalize_layer((341, 128, 1))(sample)
-    print(normed)
+    # seq = SoundSequence('/Users/allanpichardo/PycharmProjects/ftdg-ai/music', is_autoencoder=True, batch_size=1, use_raw_audio=False)
+    # batch = seq.__getitem__(0)
+    # sample = batch[0]
+    # from src.models import get_minmax_normalize_layer
+    # normed = get_minmax_normalize_layer((341, 128, 1))(sample)
+    # print(normed)
+    train = SoundSequence('/Users/allanpichardo/PycharmProjects/ftdg-ai/music', use_categorical=False,
+                          shuffle=True, is_autoencoder=False, use_raw_audio=True,
+                          batch_size=1, subset='training')
+    val = SoundSequence('/Users/allanpichardo/PycharmProjects/ftdg-ai/music', use_categorical=False,
+                        shuffle=True, is_autoencoder=False, use_raw_audio=True,
+                        batch_size=1, subset='validation')
+    print(train.weights)
+    print(val.weights)
