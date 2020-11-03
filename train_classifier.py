@@ -39,7 +39,12 @@ if __name__ == '__main__':
                           batch_size=batch_size, subset='validation')
 
     print("Loading weights from checkpoint {}".format(checkpoint))
-    triplet = tf.keras.models.load_model(checkpoint, compile=True)
+    triplet = get_efficientnet_triplet()
+    triplet.load_weights(checkpoint, compile=True)
+    triplet.compile(
+        optimizer=tf.keras.optimizers.Adam(learning_rate=lr, decay=1e-3),
+        loss=tfa.losses.TripletSemiHardLoss(),
+    )
     for layer in triplet.layers:
         layer.trainable = False
 
