@@ -26,6 +26,7 @@ if __name__ == '__main__':
     parser.add_argument('--embedding_dim', type=int, help='Size of output embedding', default=256)
     parser.add_argument('--freeze', type=bool, help='Freeze weights?', default=False)
     parser.add_argument('--architecture', type=str, help='CNN architecture: vgg or efficientnet or inception', default='efficientnet')
+    parser.add_argument('--tag', type=str, help='A version to tag the final output', default='v1')
     args = parser.parse_args()
 
     batch_size = args.batch_size
@@ -35,6 +36,7 @@ if __name__ == '__main__':
     embedding_dim = args.embedding_dim
     freeze = args.freeze
     architecture = args.architecture
+    tag = args.tag
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
@@ -64,3 +66,11 @@ if __name__ == '__main__':
         tf.keras.callbacks.ModelCheckpoint(checkpoint, verbose=1),
         tf.keras.callbacks.EarlyStopping(monitor='loss', verbose=1, patience=5, mode=min)
     ], class_weight=train.weights)
+
+    save_path = os.path.join(os.path.dirname(__file__), 'saved_models', 'triplet')
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+    save_path = os.path.join(save_path, '{}_{}'.format(architecture, tag))
+
+    print("Saving model to {}".format(save_path))
+    model.save(save_path, overwrite=True)

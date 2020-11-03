@@ -35,8 +35,8 @@ if __name__ == '__main__':
                           shuffle=True, is_autoencoder=False, use_raw_audio=True,
                           batch_size=batch_size, subset='training')
     val = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=True,
-                          shuffle=True, is_autoencoder=False, use_raw_audio=True,
-                          batch_size=batch_size, subset='validation')
+                        shuffle=True, is_autoencoder=False, use_raw_audio=True,
+                        batch_size=batch_size, subset='validation')
 
     print("Loading weights from checkpoint {}".format(checkpoint))
     triplet = get_efficientnet_triplet()
