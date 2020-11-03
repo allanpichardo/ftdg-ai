@@ -29,6 +29,7 @@ if __name__ == '__main__':
     batch_size = args.batch_size
     lr = args.lr
     epochs = args.epochs
+    checkpoint = args.checkpoint
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=True,
                           shuffle=True, is_autoencoder=False, use_raw_audio=True,
