@@ -56,10 +56,10 @@ if __name__ == '__main__':
     )
 
     model.fit(train, epochs=epochs, callbacks=[
-        tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True),
+        tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True, embeddings_freq=1),
         tf.keras.callbacks.ModelCheckpoint(checkpoint, verbose=1),
         tf.keras.callbacks.EarlyStopping(monitor='val_accuracy', verbose=1, patience=5, mode='max')
-    ], class_weight=train.weights, validation_data=val)
+    ], validation_data=val)
 
     save_path = os.path.join(os.path.dirname(__file__), 'saved_models', 'classifier')
     if not os.path.exists(save_path):

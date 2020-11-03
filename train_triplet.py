@@ -42,6 +42,9 @@ if __name__ == '__main__':
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
                         batch_size=batch_size, subset='training')
+    val = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=True,
+                        shuffle=True, is_autoencoder=False, use_raw_audio=True,
+                        batch_size=batch_size, subset='validation')
 
     model = get_vgg_triplet(embedding_size=256)
     if architecture == 'efficientnet':
@@ -63,10 +66,10 @@ if __name__ == '__main__':
         model.load_weights(checkpoint)
 
     model.fit(train, epochs=epochs, callbacks=[
-        tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True),
-        tf.keras.callbacks.ModelCheckpoint(checkpoint, verbose=1),
-        tf.keras.callbacks.EarlyStopping(monitor='loss', verbose=1, patience=5, mode='min')
-    ], class_weight=train.weights)
+        tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True, embeddings_freq=1),
+        tf.keras.callbacks.ModelCheckpoint(checkpoint, verbose=1, save_best_only=True),
+        tf.keras.callbacks.EarlyStopping(monitor='val_loss', verbose=1, patience=5, mode='min')
+    ], validation_data=val)
 
     save_path = os.path.join(os.path.dirname(__file__), 'saved_models', 'triplet')
     if not os.path.exists(save_path):
