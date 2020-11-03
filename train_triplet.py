@@ -42,7 +42,7 @@ if __name__ == '__main__':
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
                         batch_size=batch_size, subset='training')
-    val = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=True,
+    val = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
                         batch_size=batch_size, subset='validation')
 
