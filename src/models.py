@@ -63,23 +63,22 @@ def get_minmax_normalize_layer(input_shape=(341, 128, 3), epsilon=0.000001):
 def get_2d_encoder():
     input = get_spectrogram_input_layer()
     x = input
-    for i in range(3):
-        x = tf.keras.layers.Conv2D(64, (3, 3), padding='same')(x)
-        x = tf.keras.layers.BatchNormalization()(x)
-        x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D()(x)
-
-    for i in range(2):
-        x = tf.keras.layers.Conv2D(128, (3, 3), padding='same')(x)
+    for i in range(1):
+        x = tf.keras.layers.Conv2D(16, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D()(x)
 
     for i in range(1):
-        x = tf.keras.layers.Conv2D(256, (3, 3), padding='same')(x)
+        x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
         x = tf.keras.layers.BatchNormalization()(x)
         x = tf.keras.layers.ReLU()(x)
-    # x = tf.keras.layers.MaxPooling2D()(x)
+    x = tf.keras.layers.MaxPooling2D()(x)
+
+    for i in range(1):
+        x = tf.keras.layers.Conv2D(64, (3, 3), padding='same')(x)
+        x = tf.keras.layers.BatchNormalization()(x)
+        x = tf.keras.layers.ReLU()(x)
 
     x = tf.keras.layers.GlobalAveragePooling2D()(x)
     model = Model(inputs=input, outputs=x, name='2d_encoder')
@@ -128,8 +127,7 @@ def get_vgg_triplet(sr=22050, duration=8.0, embedding_size=128):
         i,
         get_minmax_normalize_layer(),
         encoder,
-        tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Dropout(0.3),
+        tf.keras.layers.Dropout(0.5),
         tf.keras.layers.Dense(embedding_size, activation=None),
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
     ])

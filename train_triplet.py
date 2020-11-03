@@ -68,7 +68,7 @@ if __name__ == '__main__':
         model.load_weights(checkpoint)
 
     model.fit(train, epochs=epochs, callbacks=[
-        tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True, embeddings_freq=embed_freq, profile_batch=1),
+        tf.keras.callbacks.TensorBoard(log_dir=log_dir),
         tf.keras.callbacks.ModelCheckpoint(checkpoint, verbose=1, save_best_only=True),
         tf.keras.callbacks.EarlyStopping(monitor='val_loss', verbose=1, patience=5, mode='min')
     ], validation_data=val, class_weight=train.weights)
