@@ -40,7 +40,7 @@ if __name__ == '__main__':
 
     print("Loading weights from checkpoint {}".format(checkpoint))
     triplet = get_efficientnet_triplet()
-    triplet.load_weights(checkpoint, compile=True)
+    triplet.load_weights(checkpoint)
     triplet.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=lr, decay=1e-3),
         loss=tfa.losses.TripletSemiHardLoss(),
