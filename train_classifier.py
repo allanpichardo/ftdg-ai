@@ -22,14 +22,17 @@ if __name__ == '__main__':
                         help='the batch size', default=32)
     parser.add_argument('--lr', type=float, help='Learning rate', default=0.0001)
     parser.add_argument('--epochs', type=int, help='Training epoch amount', default=10)
-    parser.add_argument('--checkpoint', type=str, help='Load weights from checkpoint file', default=checkpoint,
-                        required=True)
+    parser.add_argument('--checkpoint', type=str, help='Load weights from checkpoint file', default=checkpoint)
+    parser.add_argument('--triplet_model', help='Path to a savedmodel of triplet model', required=True)
+    parser.add_argument('--tag', type=str, help='A version to tag the final output', default='v1')
     args = parser.parse_args()
 
     batch_size = args.batch_size
     lr = args.lr
     epochs = args.epochs
     checkpoint = args.checkpoint
+    tag = args.tag
+    triplet_path = args.triplet_model
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=True,
                           shuffle=True, is_autoencoder=False, use_raw_audio=True,
@@ -38,13 +41,9 @@ if __name__ == '__main__':
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
                         batch_size=batch_size, subset='validation')
 
-    print("Loading weights from checkpoint {}".format(checkpoint))
-    triplet = get_efficientnet_triplet()
-    triplet.load_weights(checkpoint)
-    triplet.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=lr, decay=1e-3),
-        loss=tfa.losses.TripletSemiHardLoss(),
-    )
+    print("Loading triplet model {}".format(triplet_path))
+    triplet = tf.keras.models.load_model(triplet_path)
+
     for layer in triplet.layers:
         layer.trainable = False
 
@@ -61,3 +60,11 @@ if __name__ == '__main__':
         tf.keras.callbacks.ModelCheckpoint(checkpoint, verbose=1),
         tf.keras.callbacks.EarlyStopping(monitor='val_accuracy', verbose=1, patience=5, mode='max')
     ], class_weight=train.weights, validation_data=val)
+
+    save_path = os.path.join(os.path.dirname(__file__), 'saved_models', 'classifier')
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+    save_path = os.path.join(save_path, 'classifier_{}'.format(tag))
+
+    print("Saving model to {}".format(save_path))
+    model.save(save_path, overwrite=True)
