@@ -27,6 +27,7 @@ if __name__ == '__main__':
     parser.add_argument('--freeze', type=bool, help='Freeze weights?', default=False)
     parser.add_argument('--architecture', type=str, help='CNN architecture: vgg or efficientnet or inception', default='efficientnet')
     parser.add_argument('--tag', type=str, help='A version to tag the final output', default='v1')
+    parser.add_argument('--embedding_frequency', type=int, help='How often to generate embeddings for projector', default=10)
     args = parser.parse_args()
 
     batch_size = args.batch_size
@@ -38,6 +39,7 @@ if __name__ == '__main__':
     architecture = args.architecture
     tag = args.tag
     checkpoint = args.checkpoint
+    embed_freq = args.embedding_frequency
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
@@ -66,7 +68,7 @@ if __name__ == '__main__':
         model.load_weights(checkpoint)
 
     model.fit(train, epochs=epochs, callbacks=[
-        tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True, embeddings_freq=1),
+        tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True, embeddings_freq=embed_freq),
         tf.keras.callbacks.ModelCheckpoint(checkpoint, verbose=1, save_best_only=True),
         tf.keras.callbacks.EarlyStopping(monitor='val_loss', verbose=1, patience=5, mode='min')
     ], validation_data=val)
