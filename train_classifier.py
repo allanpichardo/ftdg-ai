@@ -23,7 +23,7 @@ if __name__ == '__main__':
     parser.add_argument('--lr', type=float, help='Learning rate', default=0.0001)
     parser.add_argument('--epochs', type=int, help='Training epoch amount', default=10)
     parser.add_argument('--checkpoint', type=str, help='Load weights from checkpoint file', default=checkpoint)
-    parser.add_argument('--triplet_model', help='Path to a savedmodel of triplet model', required=True)
+    parser.add_argument('--triplet_model', type=str, help='Path to a savedmodel of triplet model', default='saved_models/triplet/inception_v1')
     parser.add_argument('--tag', type=str, help='A version to tag the final output', default='v1')
     args = parser.parse_args()
 
@@ -42,8 +42,7 @@ if __name__ == '__main__':
                         batch_size=batch_size, subset='validation')
 
     print("Loading triplet model {}".format(triplet_path))
-    triplet = tf.keras.models.load_model(triplet_path)
-
+    triplet = tf.keras.models.load_model(triplet_path, compile=False)
     for layer in triplet.layers:
         layer.trainable = False
 
@@ -55,8 +54,10 @@ if __name__ == '__main__':
         metrics=['accuracy']
     )
 
+    model.summary()
+
     model.fit(train, epochs=epochs, callbacks=[
-        tf.keras.callbacks.TensorBoard(log_dir=log_dir, write_images=True, embeddings_freq=1),
+        tf.keras.callbacks.TensorBoard(log_dir=log_dir),
         tf.keras.callbacks.ModelCheckpoint(checkpoint, verbose=1),
         tf.keras.callbacks.EarlyStopping(monitor='val_accuracy', verbose=1, patience=5, mode='max')
     ], validation_data=val)
