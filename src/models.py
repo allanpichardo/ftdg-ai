@@ -153,8 +153,9 @@ def get_vgg_triplet(sr=22050, duration=8.0, embedding_size=128):
     return model
 
 
-def get_embedding_classifier(embedding_size=128, n_classes=40):
+def get_embedding_classifier(triplet_model, embedding_size=128, n_classes=40):
     model = tf.keras.Sequential([
+        triplet_model,
         tf.keras.Input(shape=(embedding_size,)),
         tf.keras.layers.Dense(embedding_size * 3 // 4),
         tf.keras.layers.BatchNormalization(),
@@ -210,6 +211,6 @@ def res_layer(x, filters, pooling=False, dropout=0.0, stride=1, channel_axis=3):
 
 
 if __name__ == '__main__':
-    model = get_efficientnet_triplet()
+    model = get_embedding_classifier(get_efficientnet_triplet())
     model.summary()
     # print(model.output_shape)
