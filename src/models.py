@@ -50,20 +50,14 @@ def get_wavform_input_layer(sr=22050, duration=8.0):
     return input
 
 
-def get_classifier_model(sr=22050, duration=8.0, n_classes=40):
-    i = get_audio_layer(sr, duration)
-    encoder = get_2d_encoder()
-    model = tf.keras.Sequential([
-        i,
-        LogmelToMFCC(n_mfccs=13),
-        encoder,
-        tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Dropout(0.3),
-        tf.keras.layers.Dense(96, activation=None),
-        tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
-        tf.keras.layers.Dense(n_classes, activation='softmax'),
-    ])
-    return model
+def get_minmax_normalize_layer(input_shape=(341, 128, 3), epsilon=0.000001):
+    i = tf.keras.Input(shape=input_shape)
+    min = tf.reduce_min(i)
+    max = tf.reduce_max(i)
+    num = tf.subtract(i, min)
+    den = tf.add(tf.subtract(max, min), tf.constant(epsilon))
+    x = tf.divide(num, den)
+    return Model(inputs=i, outputs=x, name='minmax_normalize')
 
 
 def get_2d_encoder():
@@ -110,7 +104,7 @@ def get_inception_resnet_triplet(sr=22050, duration=8.0, embedding_size=256):
     )
     model = tf.keras.Sequential([
         i,
-        tf.keras.layers.LayerNormalization(),
+        get_minmax_normalize_layer(),
         inception,
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.2),
@@ -128,7 +122,7 @@ def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
                                                            weights='imagenet')
     model = tf.keras.Sequential([
         i,
-        tf.keras.layers.LayerNormalization(),
+        get_minmax_normalize_layer(),
         en,
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.2),
@@ -143,7 +137,7 @@ def get_vgg_triplet(sr=22050, duration=8.0, embedding_size=128):
     encoder = get_2d_encoder()
     model = tf.keras.Sequential([
         i,
-        tf.keras.layers.BatchNormalization(),
+        get_minmax_normalize_layer(),
         encoder,
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.3),
@@ -214,6 +208,6 @@ def res_layer(x, filters, pooling=False, dropout=0.0, stride=1, channel_axis=3):
 
 
 if __name__ == '__main__':
-    model = get_embedding_classifier(get_efficientnet_triplet())
+    model = get_efficientnet_triplet()
     model.summary()
     # print(model.output_shape)
