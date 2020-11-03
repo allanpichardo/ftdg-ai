@@ -37,6 +37,7 @@ if __name__ == '__main__':
     freeze = args.freeze
     architecture = args.architecture
     tag = args.tag
+    checkpoint = args.checkpoint
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
