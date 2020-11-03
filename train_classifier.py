@@ -47,7 +47,7 @@ if __name__ == '__main__':
     for layer in triplet.layers:
         layer.trainable = False
 
-    model = get_embedding_classifier(triplet, embedding_size=256, n_classes=train.n_classes)
+    model = get_embedding_classifier(triplet, n_classes=train.n_classes)
 
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=lr, decay=1e-3),
