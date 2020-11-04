@@ -24,7 +24,7 @@ if __name__ == '__main__':
     triplet_path = args.triplet_model
 
     print("Loading model {}".format(triplet_path))
-    model = tf.keras.models.load_model(triplet_path, custom_objects={'tf': tf})
+    model = tf.keras.models.load_model(triplet_path, custom_objects={'tf': tf}, compile=False)
 
     test_dataset = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                                  shuffle=True, is_autoencoder=False, use_raw_audio=True,
