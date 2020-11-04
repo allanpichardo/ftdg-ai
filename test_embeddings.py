@@ -9,7 +9,7 @@ import tensorflow_datasets as tfds
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train the music model.')
     parser.add_argument('--batch_size', type=int,
-                        help='the batch size', default=500)
+                        help='the batch size', default=24)
     parser.add_argument('--lr', type=float, help='Learning rate', default=0.0001)
     parser.add_argument('--epochs', type=int, help='Training epoch amount', default=10)
     parser.add_argument('--triplet_model', type=str, help='Path to a savedmodel of triplet model',
