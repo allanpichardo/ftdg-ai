@@ -9,7 +9,7 @@ import tensorflow_datasets as tfds
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train the music model.')
     parser.add_argument('--batch_size', type=int,
-                        help='the batch size', default=32)
+                        help='the batch size', default=500)
     parser.add_argument('--lr', type=float, help='Learning rate', default=0.0001)
     parser.add_argument('--epochs', type=int, help='Training epoch amount', default=10)
     parser.add_argument('--triplet_model', type=str, help='Path to a savedmodel of triplet model',
@@ -41,7 +41,7 @@ if __name__ == '__main__':
     np.savetxt(os.path.join(visualization_path, "vecs.tsv"), results, delimiter='\t')
 
     out_m = io.open(os.path.join(visualization_path, 'meta.tsv'), 'w', encoding='utf-8')
-    for img, labels in tfds.as_numpy(test_dataset):
+    for wav, labels in test_dataset:
         [out_m.write(str(x) + "\n") for x in labels]
     out_m.close()
 

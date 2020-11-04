@@ -114,11 +114,9 @@ if __name__ == '__main__':
     # from src.models import get_minmax_normalize_layer
     # normed = get_minmax_normalize_layer((341, 128, 1))(sample)
     # print(normed)
-    train = SoundSequence('/Users/allanpichardo/PycharmProjects/ftdg-ai/music', use_categorical=False,
-                          shuffle=True, is_autoencoder=False, use_raw_audio=True,
-                          batch_size=1, subset='training')
     val = SoundSequence('/Users/allanpichardo/PycharmProjects/ftdg-ai/music', use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
                         batch_size=1, subset='validation')
-    print(train.weights)
-    print(val.weights)
+
+    for wav, labels in val:
+        [print(str(x) + "\n") for x in labels]
