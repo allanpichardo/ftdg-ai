@@ -67,7 +67,7 @@ if __name__ == '__main__':
     model.fit(train, epochs=epochs, callbacks=[
         tf.keras.callbacks.TensorBoard(log_dir=log_dir, embeddings_freq=embed_freq),
         tf.keras.callbacks.ModelCheckpoint(checkpoint, verbose=1),
-        tf.keras.callbacks.EarlyStopping(monitor='val_loss', verbose=1, patience=5, mode='min')
+        tf.keras.callbacks.EarlyStopping(monitor='loss', verbose=1, patience=5, mode='min')
     ])
 
     save_path = os.path.join(os.path.dirname(__file__), 'saved_models', 'triplet')
