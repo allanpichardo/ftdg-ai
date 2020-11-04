@@ -6,7 +6,7 @@ import numpy as np
 import io
 import tensorflow_datasets as tfds
 
-if __name__=='__main__':
+if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Train the music model.')
     parser.add_argument('--batch_size', type=int,
                         help='the batch size', default=32)
@@ -24,11 +24,11 @@ if __name__=='__main__':
     triplet_path = args.triplet_model
 
     print("Loading model {}".format(triplet_path))
-    model = tf.keras.models.load_model(triplet_path)
+    model = tf.keras.models.load_model(triplet_path, custom_objects={'tf': tf})
 
     test_dataset = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
-                        shuffle=True, is_autoencoder=False, use_raw_audio=True,
-                        batch_size=batch_size, subset='validation')
+                                 shuffle=True, is_autoencoder=False, use_raw_audio=True,
+                                 batch_size=batch_size, subset='validation')
 
     # Evaluate the network
     results = model.predict(test_dataset)
