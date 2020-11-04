@@ -42,7 +42,7 @@ if __name__ == '__main__':
 
     out_m = io.open(os.path.join(visualization_path, 'meta.tsv'), 'w', encoding='utf-8')
     for wav, labels in test_dataset:
-        [out_m.write(str(x) + "\n") for x in labels]
+        [out_m.write(test_dataset.encoder.inverse_transform([x])[0] + "\n") for x in labels]
     out_m.close()
 
     print("Embeddings written to {}".format(visualization_path))

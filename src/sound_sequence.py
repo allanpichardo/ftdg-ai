@@ -60,6 +60,7 @@ class SoundSequence(tf.keras.utils.Sequence):
         for i in range(self.n_classes):
             self.weights[i] = min / counts[i] if counts[i] > 0 else 0.0
 
+        self.encoder = le
 
         self.on_epoch_end()
 
@@ -119,4 +120,4 @@ if __name__ == '__main__':
                         batch_size=1, subset='validation')
 
     for wav, labels in val:
-        [print(str(x) + "\n") for x in labels]
+        [print(val.encoder.inverse_transform([x])[0]) for x in labels]
