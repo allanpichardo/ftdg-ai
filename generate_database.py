@@ -5,6 +5,8 @@ from urllib.parse import urljoin
 from src.sound_sequence import SoundSequence
 import tensorflow as tf
 from sklearn.manifold import TSNE
+import psycopg2
+from psycopg2.extras import execute_values
 
 
 def get_url_from_filename(filename):
@@ -12,6 +14,11 @@ def get_url_from_filename(filename):
     parts = basename.split('-')
     url = "{}/{}/{}?cid={}".format('https://p.scdn.co', 'mp3-preview', parts[0], os.environ['SPOTIPY_CLIENT_ID'])
     return url
+
+
+def insert_data(row_data, cursor):
+    sql = "INSERT INTO public.music(id, embedding, x, y, z, origin) VALUES %s, cube(%s::float8[]), %s, %s, %s, %s)"
+    execute_values(cursor, sql, row_data)
 
 
 if __name__ == '__main__':
@@ -48,5 +55,15 @@ if __name__ == '__main__':
         coords = tsne[i]
         url = urls[i]
         origin = labels[i]
-        data = (url, vector, coords, origin)
-        print(data)
+        data = (url, vector, coords[0], coords[1], coords[2], origin)
+        row_data.append(data)
+
+    print("Connecting to database")
+    conn = psycopg2.connect(host=os.environ['DB_HOST'], port=os.environ['DB_PORT'],
+                            username=os.environ['DB_USERNAME'], password=os.environ['DB_PASSWORD'],
+                            dbname='ftdg')
+    cursor = conn.cursor()
+    print("Inserting all {} rows".format(len(row_data)))
+    insert_data(row_data, cursor)
+
+    print("Insert complete.")
