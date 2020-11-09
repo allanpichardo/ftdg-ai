@@ -58,7 +58,7 @@ if __name__ == '__main__':
         coords = tsne[i]
         url = urls[i]
         origin = labels[i]
-        data = (url, vector, coords[0], coords[1], coords[2], origin)
+        data = (url, vector, coords.item(0), coords.item(1), coords.item(2), origin)
         row_data.append(data)
 
     print("Connecting to database at {}:{}".format(os.environ['DB_HOST'], os.environ['DB_PORT']))
