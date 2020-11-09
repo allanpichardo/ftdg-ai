@@ -58,9 +58,9 @@ if __name__ == '__main__':
         data = (url, vector, coords[0], coords[1], coords[2], origin)
         row_data.append(data)
 
-    print("Connecting to database")
+    print("Connecting to database at {}:{}".format(os.environ['DB_HOST'], os.environ['DB_PORT']))
     conn = psycopg2.connect(host=os.environ['DB_HOST'], port=os.environ['DB_PORT'],
-                            username=os.environ['DB_USERNAME'], password=os.environ['DB_PASSWORD'],
+                            user=os.environ['DB_USERNAME'], password=os.environ['DB_PASSWORD'],
                             dbname='ftdg')
     cursor = conn.cursor()
     print("Inserting all {} rows".format(len(row_data)))
