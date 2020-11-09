@@ -51,7 +51,7 @@ if __name__ == '__main__':
 
     row_data = []
     for i in range(len(tsne)):
-        vector = Y[i]
+        vector = Y[i].tolist()
         coords = tsne[i]
         url = urls[i]
         origin = labels[i]
