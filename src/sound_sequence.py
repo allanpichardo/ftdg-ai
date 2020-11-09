@@ -69,6 +69,25 @@ class SoundSequence(tf.keras.utils.Sequence):
         max = 32767
         return (wav - min) / (max - min)
 
+    def get_all(self):
+        wav_paths = self.wav_paths
+        labels = self.labels
+
+
+        # generate a batch of time data
+        # X = np.empty((self.batch_size, 1, int(self.sr * self.duration)), dtype=np.float32)
+        # Y = np.empty((self.batch_size, self.n_classes), dtype=np.float32)
+        X = []
+        Y = []
+
+        for i, (path, label) in enumerate(zip(wav_paths, labels)):
+            rate, wav = wavfile.read(path)
+            wav = wav[:rate * int(self.duration)]
+            X.append(wav.reshape(1, -1))
+
+        X = np.array(X)
+        return X, wav_paths, labels
+
     def __getitem__(self, index):
         indexes = self.indexes[index * self.batch_size:(index + 1) * self.batch_size]
 
@@ -119,5 +138,7 @@ if __name__ == '__main__':
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
                         batch_size=1, subset='validation')
 
-    for wav, labels in val:
-        [print(val.encoder.inverse_transform([x])[0]) for x in labels]
+    x, paths, labels = val.get_all()
+    print(x)
+    print(paths)
+    print(labels)

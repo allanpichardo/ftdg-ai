@@ -87,16 +87,16 @@ def main():
 
     load_dotenv()
     scope = "playlist-modify-public"
-    auth_manager = SpotifyOAuth(scope=scope)
-    # auth_manager = SpotifyClientCredentials()
+    # auth_manager = SpotifyOAuth(scope=scope)
+    auth_manager = SpotifyClientCredentials()
     spotify = spotipy.Spotify(auth_manager=auth_manager)
 
-    with open('playlists.json', 'r') as file:
-        playlists = json.load(file)
-        get_all_playlists(playlists)
+    # with open('playlists.json', 'r') as file:
+    #     playlists = json.load(file)
+    #     get_all_playlists(playlists)
 
-    # previews = get_previews_from_playlist("spotify:playlist:37i9dQZF1DZ06evO3MGNG8")
-    # print(previews)
+    previews = get_previews_from_playlist("spotify:playlist:3WR8QKLZb8TErsuQtj0PNp")
+    print(previews)
 
 
 if __name__ == '__main__':

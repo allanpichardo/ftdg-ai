@@ -34,6 +34,7 @@ Pillow==8.0.1
 pooch==1.2.0
 promise==2.3
 protobuf==3.13.0
+psycopg2-binary==2.8.6
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.20
