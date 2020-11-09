@@ -7,6 +7,7 @@ import tensorflow as tf
 from sklearn.manifold import TSNE
 import psycopg2
 from psycopg2.extras import execute_values
+import numpy as np
 
 
 def get_url_from_filename(filename):
@@ -14,6 +15,11 @@ def get_url_from_filename(filename):
     parts = basename.split('-')
     url = "{}/{}/{}?cid={}".format('https://p.scdn.co', 'mp3-preview', parts[0], os.environ['SPOTIPY_CLIENT_ID'])
     return url
+
+
+def l2_normalize(v):
+    norm = np.sqrt(np.sum(np.square(v)))
+    return v / norm
 
 
 def insert_data(row_data, cursor):
@@ -51,9 +57,10 @@ if __name__ == '__main__':
 
     row_data = []
     for i in range(len(tsne)):
+        normed = l2_normalize(Y[i])
         vector = []
-        for j in range(len(Y[i])):
-            vector.append(Y[i].item(j))
+        for j in range(len(normed)):
+            vector.append(normed.item(j))
 
         coords = tsne[i]
         url = urls[i]
@@ -68,6 +75,7 @@ if __name__ == '__main__':
     cursor = conn.cursor()
     print("Inserting all {} rows".format(len(row_data)))
     insert_data(row_data, cursor)
+    print("Committing...")
     conn.commit()
     cursor.close()
     conn.close()
