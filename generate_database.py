@@ -68,5 +68,8 @@ if __name__ == '__main__':
     cursor = conn.cursor()
     print("Inserting all {} rows".format(len(row_data)))
     insert_data(row_data, cursor)
+    cursor.commit()
+    cursor.close()
+    conn.close()
 
     print("Insert complete.")
