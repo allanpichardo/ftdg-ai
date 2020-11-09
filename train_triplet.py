@@ -20,6 +20,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int,
                         help='the batch size', default=32)
     parser.add_argument('--margin', type=float, help='The triplet loss margin', default=1.0)
+    parser.add_argument('--subset', type=str, help='Which subset of music to train on?', default='training')
     parser.add_argument('--lr', type=float, help='Learning rate', default=0.0001)
     parser.add_argument('--epochs', type=int, help='Training epoch amount', default=10)
     parser.add_argument('--checkpoint', type=str, help='Load weights from checkpoint file', default=checkpoint)
@@ -40,10 +41,11 @@ if __name__ == '__main__':
     tag = args.tag
     checkpoint = args.checkpoint
     embed_freq = args.embedding_frequency
+    subset = args.subset
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
-                        batch_size=batch_size, subset='training')
+                        batch_size=batch_size, subset=subset)
 
     model = get_vgg_triplet(embedding_size=embedding_dim)
     if architecture == 'efficientnet':
