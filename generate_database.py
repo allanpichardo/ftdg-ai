@@ -17,7 +17,7 @@ def get_url_from_filename(filename):
 
 
 def insert_data(row_data, cursor):
-    sql = "INSERT INTO public.music(id, embedding, x, y, z, origin) VALUES %s, cube(%s::float8[]), %s, %s, %s, %s)"
+    sql = "INSERT INTO public.music (embedding, x, y, z, origin) VALUES (cube(%s::float8[]), %s, %s, %s, %s)"
     execute_values(cursor, sql, row_data)
 
 
