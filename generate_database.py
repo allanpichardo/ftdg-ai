@@ -41,7 +41,7 @@ if __name__ == '__main__':
     urls = [get_url_from_filename(x) for x in paths]
 
     print("Loading triplet model from {}".format(model_path))
-    model = tf.keras.models.load_model(model_path, compile=False)
+    model = tf.keras.models.load_model(model_path, compile=False, custom_objects={'tf': tf})
 
     print("Computing embeddings...")
     Y = model.predict(X)
