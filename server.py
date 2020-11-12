@@ -16,6 +16,7 @@ from flask import jsonify
 
 load_dotenv()
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 auth_manager = SpotifyClientCredentials()
 spotify = spotipy.Spotify(auth_manager=auth_manager)
 
