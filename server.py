@@ -6,7 +6,6 @@ from dotenv import load_dotenv
 import spotipy
 import numpy as np
 from spotipy.oauth2 import SpotifyClientCredentials
-import soundfile as sf
 import urllib.parse
 import io
 import urllib.request
@@ -14,9 +13,6 @@ import os
 import tensorflow as tf
 import psycopg2
 from flask import jsonify
-from collections import Set
-import sys
-from markupsafe import escape
 
 load_dotenv()
 app = Flask(__name__)
@@ -35,7 +31,6 @@ print("Connecting to database at {}:{}".format(os.environ['DB_HOST'], os.environ
 conn = psycopg2.connect(host=os.environ['DB_HOST'], port=os.environ['DB_PORT'],
                         user=os.environ['DB_USERNAME'], password=os.environ['DB_PASSWORD'],
                         dbname='ftdg')
-
 
 america = {"Brazil", "Detroit", "Chicago", "Memphis", "New York City", "Baltimore", "Atlanta", "New Orleans",
            "Puerto Rico", "Colombia", "Dominican Republic", "Barbados", "Jamaica", "Trinidad and Tobago", "Honduras",
@@ -69,7 +64,9 @@ def get_track_preview(q):
 
 def get_first_neighbor(embedding, origins):
     cursor = conn.cursor()
-    cursor.execute("select embedding, x, y, x, origin, url from public.music where origin in %s order by embedding <-> cube(%s::float8[]) asc limit 1", (tuple(origins), embedding))
+    cursor.execute(
+        "select embedding, x, y, x, origin, url from public.music where origin in %s order by embedding <-> cube(%s::float8[]) asc limit 1",
+        (tuple(origins), embedding))
     results = cursor.fetchone()
     next_origin = results[4]
     next_embedding = list(eval(results[0]))
@@ -132,16 +129,5 @@ def search():
         })
 
 
-# if __name__ == '__main__':
-#     preview = get_track_preview("nas get down")
-#     wav = read_mp3_data(preview)
-#     embeddings = get_embeddings_from_pcm(wav)
-#     print(preview)
-#     am = america.copy()
-#     while len(am) > 0:
-#         results, next_embedding, new_am = get_first_neighbor(embeddings, am)
-#         print(results[4], results[5])
-#         embeddings = next_embedding
-#         am = new_am
-#     results, next_embedding, new_am = get_first_neighbor(embeddings, africa)
-#     print(results[4], results[5])
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=os.environ['PORT'])

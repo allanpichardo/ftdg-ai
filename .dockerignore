@@ -1,0 +1,11 @@
+music/
+logs/
+checkpoints/
+src/
+venv/
+visualizations/
+install-cuda.sh
+playlists.json
+psql_functions.sql
+temp.mp3
+.git/
