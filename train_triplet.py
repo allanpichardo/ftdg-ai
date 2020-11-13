@@ -29,6 +29,7 @@ if __name__ == '__main__':
     parser.add_argument('--architecture', type=str, help='CNN architecture: vgg or efficientnet or inception', default='efficientnet')
     parser.add_argument('--tag', type=str, help='A version to tag the final output', default='v1')
     parser.add_argument('--embedding_frequency', type=int, help='How often to generate embeddings for projector', default=10)
+    parser.add_argument('--use_weights', type=bool, help='Use class weights during training', default=True)
     args = parser.parse_args()
 
     batch_size = args.batch_size
@@ -42,6 +43,7 @@ if __name__ == '__main__':
     checkpoint = args.checkpoint
     embed_freq = args.embedding_frequency
     subset = args.subset
+    use_weights = args.use_weights
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
@@ -70,7 +72,7 @@ if __name__ == '__main__':
         tf.keras.callbacks.TensorBoard(log_dir=log_dir, embeddings_freq=embed_freq),
         tf.keras.callbacks.ModelCheckpoint(checkpoint, verbose=1),
         tf.keras.callbacks.EarlyStopping(monitor='loss', verbose=1, patience=5, mode='min')
-    ])
+    ], class_weight=train.weights if use_weights else None)
 
     save_path = os.path.join(os.path.dirname(__file__), 'saved_models', 'triplet')
     if not os.path.exists(save_path):
