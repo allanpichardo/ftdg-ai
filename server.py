@@ -20,7 +20,7 @@ app.config['JSON_SORT_KEYS'] = False
 auth_manager = SpotifyClientCredentials()
 spotify = spotipy.Spotify(auth_manager=auth_manager)
 
-model_path = os.path.join('saved_models', 'triplet', 'efficientnet_v1.1')
+model_path = os.path.join('saved_models', 'triplet', 'efficientnet_v3.0')
 if not os.path.exists(model_path):
     print("Couldn't find model in {}".format(model_path))
     exit(1)
