@@ -29,7 +29,7 @@ if __name__ == '__main__':
     parser.add_argument('--architecture', type=str, help='CNN architecture: vgg or efficientnet or inception', default='efficientnet')
     parser.add_argument('--tag', type=str, help='A version to tag the final output', default='v1')
     parser.add_argument('--embedding_frequency', type=int, help='How often to generate embeddings for projector', default=10)
-    parser.add_argument('--use_weights', type=bool, help='Use class weights during training', default=True)
+    parser.add_argument('--use_weights', type=bool, help='Use class weights during training', default=False)
     args = parser.parse_args()
 
     batch_size = args.batch_size
