@@ -104,7 +104,7 @@ def get_inception_resnet_triplet(sr=22050, duration=8.0, embedding_size=256):
 
 def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
     i = get_audio_layer(sr, duration)
-    en = tf.keras.applications.efficientnet.EfficientNetB1(include_top=False,
+    en = tf.keras.applications.efficientnet.EfficientNetB1git (include_top=False,
                                                            input_shape=(341, 128, 3),
                                                            pooling='avg',
                                                            weights='imagenet')

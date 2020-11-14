@@ -13,7 +13,7 @@ if __name__ == '__main__':
     parser.add_argument('--lr', type=float, help='Learning rate', default=0.0001)
     parser.add_argument('--epochs', type=int, help='Training epoch amount', default=10)
     parser.add_argument('--triplet_model', type=str, help='Path to a savedmodel of triplet model',
-                        default='saved_models/triplet/efficientnet_v1.1')
+                        default='saved_models/triplet/efficientnet_v3.0')
     parser.add_argument('--tag', type=str, help='A version to tag the final output', default='v1')
     args = parser.parse_args()
 
