@@ -50,7 +50,7 @@ def read_mp3_data(url, duration=8.0):
     pathlib.Path('temp.mp3').write_bytes(z.getbuffer())
     data, sr = librosa.load('temp.mp3')
     partition = len(data) // 3
-    wav = data[partition * 2:-1]
+    wav = data[0: partition]
     wav = wav[:sr * int(duration)]
     return wav.reshape(1, -1)
 
@@ -113,7 +113,7 @@ def search():
                 "origin": results[4],
                 "url": results[5]
             })
-            # embeddings = next_embedding
+            embeddings = next_embedding
             am = new_am
         results, next_embedding, new_am = get_first_neighbor(embeddings, africa.copy())
         treks['constellation'].append({
