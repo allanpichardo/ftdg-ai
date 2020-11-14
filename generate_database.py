@@ -34,10 +34,12 @@ if __name__ == '__main__':
                         default=os.path.join(os.path.dirname(__file__), 'music'))
     parser.add_argument('--triplet_model', type=str, help='Path to a savedmodel of triplet model',
                         default='saved_models/triplet/efficientnet_v1.1')
+    parser.add_argument('--normalize', type=bool, help='Normalize embeddings', default=False)
     args = parser.parse_args()
 
     music_path = args.music_path
     model_path = args.triplet_model
+    normalized = args.normalize
 
     sequences = SoundSequence(music_path=music_path, use_categorical=False, shuffle=False, subset='validation')
     X, paths, labels = sequences.get_all()
@@ -57,7 +59,7 @@ if __name__ == '__main__':
 
     row_data = []
     for i in range(len(tsne)):
-        normed = l2_normalize(Y[i])
+        normed = l2_normalize(Y[i]) if normalized else Y[i]
         vector = []
         for j in range(len(normed)):
             vector.append(normed.item(j))
