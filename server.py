@@ -98,6 +98,30 @@ def hello_world():
     return 'Hello, World!'
 
 
+@app.route('/starfield')
+def starfield():
+    try:
+        cursor = conn.cursor()
+        cursor.execute("select id, x, y, z from public.music")
+        results = cursor.fetchall()
+        arr = []
+        for row in results:
+            arr.append({
+                "id": row[0],
+                "x": row[1],
+                "y": row[2],
+                "z": row[3]
+            })
+        return jsonify({
+            "success": True,
+            "starfield": arr
+        })
+    except:
+        return jsonify({
+            "success": False
+        })
+
+
 @app.route('/search')
 def search():
     try:
@@ -127,7 +151,7 @@ def search():
                 "origin": results[5],
                 "url": results[6]
             })
-            embeddings = next_embedding
+            # embeddings = next_embedding
             am = new_am
         results, next_embedding, new_am = get_first_neighbor(embeddings, africa.copy())
         treks['constellation'].append({
