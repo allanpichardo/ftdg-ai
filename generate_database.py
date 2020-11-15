@@ -5,6 +5,7 @@ from urllib.parse import urljoin
 from src.sound_sequence import SoundSequence
 import tensorflow as tf
 from sklearn.manifold import TSNE
+from sklearn.decomposition import PCA
 import psycopg2
 from psycopg2.extras import execute_values
 import numpy as np
@@ -55,7 +56,8 @@ if __name__ == '__main__':
     Y = model.predict(X)
 
     print("Computing TSNE...")
-    tsne = TSNE(n_components=3, verbose=1, n_jobs=-1, perplexity=5, n_iter=5000).fit_transform(Y)
+    tsne = PCA(n_components=3).fit_transform(Y)
+    # tsne = TSNE(n_components=3, verbose=1, n_jobs=-1, perplexity=5, n_iter=5000).fit_transform(Y)
 
     row_data = []
     for i in range(len(tsne)):
