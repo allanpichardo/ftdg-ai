@@ -56,6 +56,7 @@ def read_mp3_data(url, duration=8.0):
 
 
 def get_track_preview(q):
+    global spotify
     res = spotify.search(q)
     if res['tracks']:
         if res['tracks']['items'][0]:
@@ -64,6 +65,7 @@ def get_track_preview(q):
 
 
 def get_preview_from_id(id):
+    global conn
     cursor = conn.cursor()
     sql = "select url from public.music where id = %s"
     cursor.execute(sql, (id,))
@@ -72,6 +74,7 @@ def get_preview_from_id(id):
 
 
 def get_first_neighbor(embedding, origins):
+    global conn
     cursor = conn.cursor()
     cursor.execute(
         "select id, embedding, x, y, x, origin, url from public.music where origin in %s order by embedding <-> cube(%s::float8[]) asc limit 1",
@@ -100,6 +103,7 @@ def hello_world():
 
 @app.route('/starfield')
 def starfield():
+    global conn
     try:
         cursor = conn.cursor()
         cursor.execute("select id, x, y, z from public.music")
@@ -124,6 +128,9 @@ def starfield():
 
 @app.route('/search')
 def search():
+    global conn
+    global america
+    global africa
     try:
         query = request.args.get('q')
         id = request.args.get('id')
