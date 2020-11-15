@@ -63,14 +63,22 @@ def get_track_preview(q):
     return None
 
 
+def get_preview_from_id(id):
+    cursor = conn.cursor()
+    sql = "select url from public.music where id = %s"
+    cursor.execute(sql, (id,))
+    results = cursor.fetchone()
+    return results[0]
+
+
 def get_first_neighbor(embedding, origins):
     cursor = conn.cursor()
     cursor.execute(
-        "select embedding, x, y, x, origin, url from public.music where origin in %s order by embedding <-> cube(%s::float8[]) asc limit 1",
+        "select id, embedding, x, y, x, origin, url from public.music where origin in %s order by embedding <-> cube(%s::float8[]) asc limit 1",
         (tuple(origins), embedding))
     results = cursor.fetchone()
-    next_origin = results[4]
-    next_embedding = list(eval(results[0]))
+    next_origin = results[5]
+    next_embedding = list(eval(results[1]))
     origins.remove(next_origin)
     return results, next_embedding, origins
 
@@ -94,7 +102,12 @@ def hello_world():
 def search():
     try:
         query = request.args.get('q')
-        url = get_track_preview(query)
+        id = request.args.get('id')
+        url = ''
+        if id:
+            url = get_preview_from_id(id)
+        elif query:
+            url = get_track_preview(query)
         pcm = read_mp3_data(url)
         embeddings = get_embeddings_from_pcm(pcm)
         am = america.copy()
@@ -107,21 +120,23 @@ def search():
         while len(am) > 0:
             results, next_embedding, new_am = get_first_neighbor(embeddings, am)
             treks['constellation'].append({
-                "x": results[1],
-                "y": results[2],
-                "z": results[3],
-                "origin": results[4],
-                "url": results[5]
+                "id": results[0],
+                "x": results[2],
+                "y": results[3],
+                "z": results[4],
+                "origin": results[5],
+                "url": results[6]
             })
             embeddings = next_embedding
             am = new_am
         results, next_embedding, new_am = get_first_neighbor(embeddings, africa.copy())
         treks['constellation'].append({
-            "x": results[1],
-            "y": results[2],
-            "z": results[3],
-            "origin": results[4],
-            "url": results[5]
+            "id": results[0],
+            "x": results[2],
+            "y": results[3],
+            "z": results[4],
+            "origin": results[5],
+            "url": results[6]
         })
         return jsonify(treks)
     except AttributeError:
