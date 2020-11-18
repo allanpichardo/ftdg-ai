@@ -44,7 +44,7 @@ def get_spectrogram_input_layer():
 
 
 def get_mfcc_input_layer():
-    input = tf.keras.layers.Input(shape=(341, 32, 1), name='spectro_input')
+    input = tf.keras.layers.Input(shape=(341, 32, 1), name='mfcc_input')
     return input
 
 

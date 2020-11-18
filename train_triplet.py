@@ -49,7 +49,7 @@ if __name__ == '__main__':
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
                         batch_size=batch_size, subset=subset)
 
-    model = get_vgg_triplet(embedding_size=embedding_dim)
+    model = get_efficientnet_triplet(embedding_size=embedding_dim)
     if architecture == 'efficientnet':
         model = get_efficientnet_triplet(embedding_size=embedding_dim)
     elif architecture == 'inception':
