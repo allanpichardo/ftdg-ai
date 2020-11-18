@@ -26,9 +26,12 @@ def get_audio_layer(SR=22050, DT=8.0):
                                          output_data_format='channels_last', name='melspectrogram_b')
     i = tf.keras.layers.Input(shape=input_shape)
     r = melgram_r(i)
+    r = LogmelToMFCC(n_mfccs=32)(r)
     g = melgram_g(i)
+    g = LogmelToMFCC(n_mfccs=32)(g)
     g = tf.keras.layers.ZeroPadding2D((86, 0))(g)
     b = melgram_b(i)
+    b = LogmelToMFCC(n_mfccs=32)(b)
     b = tf.keras.layers.ZeroPadding2D((129, 0))(b)
     x = tf.keras.layers.Concatenate()([r, g, b])
     return Model(inputs=i, outputs=x, name='triple_spectrogram')
@@ -41,7 +44,7 @@ def get_spectrogram_input_layer():
 
 
 def get_mfcc_input_layer():
-    input = tf.keras.layers.Input(shape=(341, 13, 1), name='spectro_input')
+    input = tf.keras.layers.Input(shape=(341, 32, 1), name='spectro_input')
     return input
 
 
@@ -50,7 +53,7 @@ def get_wavform_input_layer(sr=22050, duration=8.0):
     return input
 
 
-def get_minmax_normalize_layer(input_shape=(341, 128, 3), epsilon=0.000001):
+def get_minmax_normalize_layer(input_shape=(341, 32, 3), epsilon=0.000001):
     i = tf.keras.Input(shape=input_shape)
     min = tf.reduce_min(i)
     max = tf.reduce_max(i)
@@ -88,7 +91,7 @@ def get_2d_encoder():
 def get_inception_resnet_triplet(sr=22050, duration=8.0, embedding_size=256):
     i = get_audio_layer(sr, duration)
     inception = tf.keras.applications.inception_resnet_v2.InceptionResNetV2(
-        include_top=False, input_shape=(341, 128, 3), pooling='avg'
+        include_top=False, input_shape=(341, 32, 3), pooling='avg'
     )
     model = tf.keras.Sequential([
         i,
@@ -105,7 +108,7 @@ def get_inception_resnet_triplet(sr=22050, duration=8.0, embedding_size=256):
 def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
     i = get_audio_layer(sr, duration)
     en = tf.keras.applications.efficientnet.EfficientNetB0(include_top=False,
-                                                           input_shape=(341, 128, 3),
+                                                           input_shape=(341, 32, 3),
                                                            pooling='avg',
                                                            weights='imagenet')
     model = tf.keras.Sequential([
@@ -190,6 +193,6 @@ def res_layer(x, filters, pooling=False, dropout=0.0, stride=1, channel_axis=3):
 
 
 if __name__ == '__main__':
-    model = get_vgg_triplet()
+    model = get_efficientnet_triplet()
     model.summary()
     # print(model.output_shape)

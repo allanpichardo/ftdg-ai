@@ -56,6 +56,7 @@ def read_mp3_data(url, duration=8.0):
 
 
 def get_track_preview(q):
+    global spotify
     res = spotify.search(q)
     if res['tracks']:
         if res['tracks']['items'][0]:
@@ -64,6 +65,7 @@ def get_track_preview(q):
 
 
 def get_preview_from_id(id):
+    global conn
     cursor = conn.cursor()
     sql = "select url from public.music where id = %s"
     cursor.execute(sql, (id,))
@@ -72,6 +74,7 @@ def get_preview_from_id(id):
 
 
 def get_first_neighbor(embedding, origins):
+    global conn
     cursor = conn.cursor()
     cursor.execute(
         "select id, embedding, x, y, x, origin, url from public.music where origin in %s order by embedding <-> cube(%s::float8[]) asc limit 1",
@@ -98,8 +101,36 @@ def hello_world():
     return 'Hello, World!'
 
 
+@app.route('/starfield')
+def starfield():
+    global conn
+    try:
+        cursor = conn.cursor()
+        cursor.execute("select id, x, y, z from public.music")
+        results = cursor.fetchall()
+        arr = []
+        for row in results:
+            arr.append({
+                "id": row[0],
+                "x": row[1],
+                "y": row[2],
+                "z": row[3]
+            })
+        return jsonify({
+            "success": True,
+            "starfield": arr
+        })
+    except:
+        return jsonify({
+            "success": False
+        })
+
+
 @app.route('/search')
 def search():
+    global conn
+    global america
+    global africa
     try:
         query = request.args.get('q')
         id = request.args.get('id')
@@ -127,7 +158,7 @@ def search():
                 "origin": results[5],
                 "url": results[6]
             })
-            embeddings = next_embedding
+            # embeddings = next_embedding
             am = new_am
         results, next_embedding, new_am = get_first_neighbor(embeddings, africa.copy())
         treks['constellation'].append({
