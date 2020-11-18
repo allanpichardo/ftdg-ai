@@ -26,9 +26,12 @@ def get_audio_layer(SR=22050, DT=8.0):
                                          output_data_format='channels_last', name='melspectrogram_b')
     i = tf.keras.layers.Input(shape=input_shape)
     r = melgram_r(i)
+    r = LogmelToMFCC(n_mfccs=13)(r)
     g = melgram_g(i)
+    g = LogmelToMFCC(n_mfccs=13)(g)
     g = tf.keras.layers.ZeroPadding2D((86, 0))(g)
     b = melgram_b(i)
+    b = LogmelToMFCC(n_mfccs=13)(b)
     b = tf.keras.layers.ZeroPadding2D((129, 0))(b)
     x = tf.keras.layers.Concatenate()([r, g, b])
     return Model(inputs=i, outputs=x, name='triple_spectrogram')
@@ -104,7 +107,7 @@ def get_inception_resnet_triplet(sr=22050, duration=8.0, embedding_size=256):
 
 def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
     i = get_audio_layer(sr, duration)
-    en = tf.keras.applications.efficientnet.EfficientNetB1git (include_top=False,
+    en = tf.keras.applications.efficientnet.EfficientNetB0(include_top=False,
                                                            input_shape=(341, 128, 3),
                                                            pooling='avg',
                                                            weights='imagenet')
@@ -189,6 +192,6 @@ def res_layer(x, filters, pooling=False, dropout=0.0, stride=1, channel_axis=3):
 
 
 if __name__ == '__main__':
-    model = get_vgg_triplet()
+    model = get_efficientnet_triplet()
     model.summary()
     # print(model.output_shape)
