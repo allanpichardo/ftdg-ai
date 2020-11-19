@@ -14,15 +14,15 @@ import os
 def get_audio_layer(SR=22050, DT=8.0):
     input_shape = (1, int(SR * DT))
     melgram_r = get_melspectrogram_layer(input_shape=input_shape, n_fft=2048, hop_length=512, mel_f_min=40.0,
-                                       mel_f_max=10000.0, return_decibel=False, win_length=2048,
+                                       mel_f_max=10000.0, return_decibel=True, win_length=2048,
                                        n_mels=128, sample_rate=SR, input_data_format='channels_first',
                                        output_data_format='channels_last', name='melspectrogram_r')
     melgram_g = get_melspectrogram_layer(input_shape=input_shape, n_fft=4096, hop_length=1024, mel_f_min=40.0,
-                                         mel_f_max=10000.0, return_decibel=False, win_length=4096,
+                                         mel_f_max=10000.0, return_decibel=True, win_length=4096,
                                          n_mels=128, sample_rate=SR, input_data_format='channels_first',
                                          output_data_format='channels_last', name='melspectrogram_g')
     melgram_b = get_melspectrogram_layer(input_shape=input_shape, n_fft=8192, hop_length=2048, mel_f_min=40.0,
-                                         mel_f_max=10000.0, return_decibel=False, win_length=8192,
+                                         mel_f_max=10000.0, return_decibel=True, win_length=8192,
                                          n_mels=128, sample_rate=SR, input_data_format='channels_first',
                                          output_data_format='channels_last', name='melspectrogram_b')
 
