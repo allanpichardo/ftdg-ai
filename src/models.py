@@ -30,17 +30,17 @@ def get_audio_layer(SR=22050, DT=8.0):
     i = tf.keras.layers.Input(shape=input_shape)
 
     r = melgram_r(i)
-    r = tf.math.log(r + epsilon)
-    r = LogmelToMFCC(n_mfccs=32)(r)
+    # r = tf.math.log(r + epsilon)
+    # r = LogmelToMFCC(n_mfccs=32)(r)
 
     g = melgram_g(i)
-    g = tf.math.log(g + epsilon)
-    g = LogmelToMFCC(n_mfccs=32)(g)
+    # g = tf.math.log(g + epsilon)
+    # g = LogmelToMFCC(n_mfccs=32)(g)
     g = tf.keras.layers.ZeroPadding2D((86, 0))(g)
 
     b = melgram_b(i)
-    b = tf.math.log(b + epsilon)
-    b = LogmelToMFCC(n_mfccs=32)(b)
+    # b = tf.math.log(b + epsilon)
+    # b = LogmelToMFCC(n_mfccs=32)(b)
     b = tf.keras.layers.ZeroPadding2D((129, 0))(b)
 
     x = tf.keras.layers.Concatenate()([r, g, b])
@@ -126,7 +126,7 @@ def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
         i,
         get_minmax_normalize_layer(),
         # tf.keras.layers.Conv2D(3, (3, 3), padding='same', activation=None),
-        # ChannelSwap(data_format='channels_last'),
+        ChannelSwap(data_format='channels_last'),
         en,
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.3),
