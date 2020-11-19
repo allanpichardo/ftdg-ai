@@ -43,7 +43,8 @@ def get_audio_layer(SR=22050, DT=8.0):
     b = LogmelToMFCC(n_mfccs=32)(b)
     b = tf.keras.layers.ZeroPadding2D((129, 0))(b)
 
-    x = tf.keras.layers.Concatenate()([r, g, b])
+    # x = tf.keras.layers.Concatenate()([r, g, b])
+    x = r
     return Model(inputs=i, outputs=x, name='triple_spectrogram')
 
 
@@ -123,8 +124,9 @@ def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
                                                            weights='imagenet')
     model = tf.keras.Sequential([
         i,
-        ChannelSwap(data_format='channels_last'),
         get_minmax_normalize_layer(),
+        tf.keras.layers.Conv2D(3, (3, 3), padding='same', activation=None),
+        ChannelSwap(data_format='channels_last'),
         en,
         tf.keras.layers.BatchNormalization(),
         tf.keras.layers.Dropout(0.3),
@@ -204,6 +206,6 @@ def res_layer(x, filters, pooling=False, dropout=0.0, stride=1, channel_axis=3):
 
 
 if __name__ == '__main__':
-    model = get_audio_layer()
+    model = get_efficientnet_triplet()
     model.summary()
     # print(model.output_shape)
