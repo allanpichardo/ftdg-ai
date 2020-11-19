@@ -19,9 +19,11 @@ app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 auth_manager = SpotifyClientCredentials()
 spotify = spotipy.Spotify(auth_manager=auth_manager)
-normalize = True if os.environ['normalize'] is not None else False
+normalize = True if os.environ['NORMALIZE'] == 'true' else False
+version = os.environ['VERSION']
 
-model_path = os.path.join('saved_models', 'triplet', 'efficientnet_v4.0')
+
+model_path = os.path.join('saved_models', 'triplet', 'efficientnet_v{}'.format(version))
 if not os.path.exists(model_path):
     print("Couldn't find model in {}".format(model_path))
     exit(1)
