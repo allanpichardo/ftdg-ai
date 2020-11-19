@@ -2,6 +2,7 @@ from tensorflow.keras import layers
 from tensorflow.keras.layers import TimeDistributed
 from tensorflow.keras.models import Model
 from tensorflow.keras.regularizers import l2
+from kapre.augmentation import ChannelSwap
 from kapre.signal import LogmelToMFCC
 from kapre.composed import get_frequency_aware_conv2d, get_melspectrogram_layer
 import tensorflow as tf
@@ -24,15 +25,24 @@ def get_audio_layer(SR=22050, DT=8.0):
                                          mel_f_max=8000.0, return_decibel=True, win_length=8192,
                                          n_mels=128, sample_rate=SR, input_data_format='channels_first',
                                          output_data_format='channels_last', name='melspectrogram_b')
+
+    epsilon = 1e-6
     i = tf.keras.layers.Input(shape=input_shape)
+
     r = melgram_r(i)
+    r = tf.math.log(r + epsilon)
     r = LogmelToMFCC(n_mfccs=32)(r)
+
     g = melgram_g(i)
+    g = tf.math.log(g + epsilon)
     g = LogmelToMFCC(n_mfccs=32)(g)
     g = tf.keras.layers.ZeroPadding2D((86, 0))(g)
+
     b = melgram_b(i)
+    b = tf.math.log(b + epsilon)
     b = LogmelToMFCC(n_mfccs=32)(b)
     b = tf.keras.layers.ZeroPadding2D((129, 0))(b)
+
     x = tf.keras.layers.Concatenate()([r, g, b])
     return Model(inputs=i, outputs=x, name='triple_spectrogram')
 
@@ -113,6 +123,7 @@ def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
                                                            weights='imagenet')
     model = tf.keras.Sequential([
         i,
+
         get_minmax_normalize_layer(),
         en,
         tf.keras.layers.BatchNormalization(),
@@ -193,6 +204,6 @@ def res_layer(x, filters, pooling=False, dropout=0.0, stride=1, channel_axis=3):
 
 
 if __name__ == '__main__':
-    model = get_efficientnet_triplet()
+    model = get_audio_layer()
     model.summary()
     # print(model.output_shape)
