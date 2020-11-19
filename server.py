@@ -19,6 +19,7 @@ app = Flask(__name__)
 app.config['JSON_SORT_KEYS'] = False
 auth_manager = SpotifyClientCredentials()
 spotify = spotipy.Spotify(auth_manager=auth_manager)
+normalize = True if os.environ['normalize'] else False
 
 model_path = os.path.join('saved_models', 'triplet', 'efficientnet_v4.0')
 if not os.path.exists(model_path):
@@ -93,9 +94,10 @@ def get_first_neighbor(embedding, origins):
 
 
 def get_embeddings_from_pcm(pcm):
+    global normalize
     pcm = np.array([pcm])
     embeddings = model.predict([pcm])
-    normed = l2_normalize(embeddings[0])
+    normed = l2_normalize(embeddings[0]) if normalize else embeddings[0]
     vector = []
     for j in range(len(normed)):
         vector.append(normed.item(j))
