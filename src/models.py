@@ -123,7 +123,7 @@ def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
                                                            weights='imagenet')
     model = tf.keras.Sequential([
         i,
-
+        ChannelSwap(data_format='channels_last'),
         get_minmax_normalize_layer(),
         en,
         tf.keras.layers.BatchNormalization(),
