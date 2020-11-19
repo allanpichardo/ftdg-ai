@@ -64,7 +64,7 @@ def get_wavform_input_layer(sr=22050, duration=8.0):
     return input
 
 
-def get_minmax_normalize_layer(input_shape=(341, 32, 3), epsilon=0.000001):
+def get_minmax_normalize_layer(input_shape=(341, 128, 3), epsilon=0.000001):
     i = tf.keras.Input(shape=input_shape)
     min = tf.reduce_min(i)
     max = tf.reduce_max(i)
@@ -102,7 +102,7 @@ def get_2d_encoder():
 def get_inception_resnet_triplet(sr=22050, duration=8.0, embedding_size=256):
     i = get_audio_layer(sr, duration)
     inception = tf.keras.applications.inception_resnet_v2.InceptionResNetV2(
-        include_top=False, input_shape=(341, 32, 3), pooling='avg'
+        include_top=False, input_shape=(341, 128, 3), pooling='avg'
     )
     model = tf.keras.Sequential([
         i,
@@ -119,7 +119,7 @@ def get_inception_resnet_triplet(sr=22050, duration=8.0, embedding_size=256):
 def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
     i = get_audio_layer(sr, duration)
     en = tf.keras.applications.efficientnet.EfficientNetB0(include_top=False,
-                                                           input_shape=(341, 32, 3),
+                                                           input_shape=(341, 128, 3),
                                                            pooling='avg',
                                                            weights='imagenet')
     model = tf.keras.Sequential([
