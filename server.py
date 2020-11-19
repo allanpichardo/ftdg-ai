@@ -40,6 +40,12 @@ america = {"Brazil", "Detroit", "Chicago", "Memphis", "New York City", "Baltimor
 africa = {"Senegal", "Ghana", "Angola", "Benin", "Nigeria"}
 
 
+def get_db_connection():
+    return psycopg2.connect(host=os.environ['DB_HOST'], port=os.environ['DB_PORT'],
+                            user=os.environ['DB_USERNAME'], password=os.environ['DB_PASSWORD'],
+                            dbname='ftdg')
+
+
 def l2_normalize(v):
     norm = np.sqrt(np.sum(np.square(v)))
     return v / norm
@@ -120,6 +126,10 @@ def starfield():
             "success": True,
             "starfield": arr
         })
+    except psycopg2.InterfaceError:
+        print("reconnecting to db")
+        conn = get_db_connection()
+        return starfield()
     except:
         return jsonify({
             "success": False
@@ -174,6 +184,10 @@ def search():
         return jsonify({
             "success": False
         })
+    except psycopg2.InterfaceError:
+        print("reconnecting to db")
+        conn = get_db_connection()
+        return search()
 
 
 if __name__ == '__main__':
