@@ -82,6 +82,15 @@ def get_preview_from_id(id):
     return results[0]
 
 
+def get_embeddings_url_from_id(id):
+    global conn
+    cursor = conn.cursor()
+    sql = "select embedding, url from public.music where id = %s"
+    cursor.execute(sql, (id,))
+    results = cursor.fetchone()
+    return list(eval(results[0])), results[1]
+
+
 def get_first_neighbor(embedding, origins):
     global conn
     cursor = conn.cursor()
@@ -149,12 +158,13 @@ def search():
         query = request.args.get('q')
         id = request.args.get('id')
         url = ''
+        embeddings = None
         if id:
-            url = get_preview_from_id(id)
+            embeddings, url = get_embeddings_url_from_id(id)
         elif query:
             url = get_track_preview(query)
-        pcm = read_mp3_data(url)
-        embeddings = get_embeddings_from_pcm(pcm)
+            pcm = read_mp3_data(url)
+            embeddings = get_embeddings_from_pcm(pcm)
         am = america.copy()
         treks = {
             "success": True,
@@ -192,6 +202,10 @@ def search():
         print("reconnecting to db")
         conn = get_db_connection()
         return search()
+    except TypeError:
+        return jsonify({
+            "success": False
+        })
 
 
 if __name__ == '__main__':
