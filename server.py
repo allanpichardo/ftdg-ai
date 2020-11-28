@@ -125,7 +125,7 @@ def starfield():
     global conn
     try:
         cursor = conn.cursor()
-        cursor.execute("select id, x, y, z from public.music")
+        cursor.execute("select id, x, y, z, origin from public.music")
         results = cursor.fetchall()
         arr = []
         for row in results:
@@ -133,7 +133,8 @@ def starfield():
                 "id": row[0],
                 "x": row[1],
                 "y": row[2],
-                "z": row[3]
+                "z": row[3],
+                "origin": row[4]
             })
         return jsonify({
             "success": True,
