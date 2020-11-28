@@ -124,8 +124,9 @@ def hello_world():
 def starfield():
     global conn
     try:
+        limit = request.args.get('limit') if request.args.get('limit') is not None else 200
         cursor = conn.cursor()
-        cursor.execute("select id, x, y, z, origin, url from public.music")
+        cursor.execute("select id, x, y, z, origin, url from public.music order by random() limit {}".format(limit))
         results = cursor.fetchall()
         arr = []
         for row in results:
