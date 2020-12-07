@@ -56,8 +56,8 @@ if __name__ == '__main__':
     Y = model.predict(X)
 
     print("Computing TSNE...")
-    tsne = PCA(n_components=3).fit_transform(Y)
-    # tsne = TSNE(n_components=3, verbose=1, n_jobs=-1, perplexity=5, n_iter=5000).fit_transform(Y)
+    # tsne = PCA(n_components=3).fit_transform(Y)
+    tsne = TSNE(n_components=3, verbose=1, n_jobs=-1, perplexity=5, n_iter=10).fit_transform(Y)
 
     row_data = []
     for i in range(len(tsne)):
