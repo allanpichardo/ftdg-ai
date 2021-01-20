@@ -23,13 +23,14 @@ normalize = True if os.environ['NORMALIZE'] == 'true' else False
 version = os.environ['VERSION']
 
 
+model = None
 model_path = os.path.join('saved_models', 'triplet', 'efficientnet_v{}'.format(version))
 if not os.path.exists(model_path):
     print("Couldn't find model in {}".format(model_path))
-    exit(1)
-
-print("Loading tensorflow model")
-model = tf.keras.models.load_model(model_path, custom_objects={'tf': tf}, compile=False)
+    print("Loading API without model")
+else:
+    print("Loading tensorflow model")
+    model = tf.keras.models.load_model(model_path, custom_objects={'tf': tf}, compile=False)
 
 print("Connecting to database at {}:{}".format(os.environ['DB_HOST'], os.environ['DB_PORT']))
 conn = psycopg2.connect(host=os.environ['DB_HOST'], port=os.environ['DB_PORT'],

@@ -34,8 +34,8 @@ if __name__ == '__main__':
     parser.add_argument('--music_path', type=str, help='Base path of music files',
                         default=os.path.join(os.path.dirname(__file__), 'music'))
     parser.add_argument('--triplet_model', type=str, help='Path to a savedmodel of triplet model',
-                        default='saved_models/triplet/efficientnet_v1.1')
-    parser.add_argument('--normalize', type=bool, help='Normalize embeddings', default=False)
+                        default='saved_models/triplet/efficientnet_v3.0')
+    parser.add_argument('--normalize', type=bool, help='Normalize embeddings', default=True)
     args = parser.parse_args()
 
     music_path = args.music_path
@@ -57,7 +57,8 @@ if __name__ == '__main__':
 
     print("Computing TSNE...")
     # tsne = PCA(n_components=3).fit_transform(Y)
-    tsne = TSNE(n_components=3, verbose=1, n_jobs=-1, perplexity=5, n_iter=250).fit_transform(Y)
+    # tsne = TSNE(n_components=3, verbose=1, n_jobs=-1, perplexity=5, n_iter=250).fit_transform(Y)
+    tsne = np.random.rand(len(Y), 3)
 
     row_data = []
     for i in range(len(tsne)):
