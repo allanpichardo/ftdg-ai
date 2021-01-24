@@ -207,7 +207,7 @@ def search():
     except AttributeError as e:
         return jsonify({
             "success": False,
-            "message": e
+            "message": repr(e)
         })
     except psycopg2.InterfaceError:
         print("reconnecting to db")
@@ -216,7 +216,7 @@ def search():
     except TypeError as e:
         return jsonify({
             "success": False,
-            "message": e
+            "message": repr(e)
         })
 
 
