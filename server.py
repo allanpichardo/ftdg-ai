@@ -204,17 +204,19 @@ def search():
             "url": results[6]
         })
         return jsonify(treks)
-    except AttributeError:
+    except AttributeError as e:
         return jsonify({
-            "success": False
+            "success": False,
+            "message": e
         })
     except psycopg2.InterfaceError:
         print("reconnecting to db")
         conn = get_db_connection()
         return search()
-    except TypeError:
+    except TypeError as e:
         return jsonify({
-            "success": False
+            "success": False,
+            "message": e
         })
 
 
