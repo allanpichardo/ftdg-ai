@@ -96,13 +96,13 @@ def get_first_neighbor(embedding, origins):
     global conn
     cursor = conn.cursor()
 
-    dot_product = "1-("
+    query = "select id, embedding, x, y, x, origin, url, 1-("
     for i in range(1, 97):
-        dot_product = dot_product + "cube_ll_coord(embedding, {}) * {}{}".format(i, embedding[i-1], " + " if i < 96 else "")
-    dot_product = dot_product + ")"
+        query = query + "cube_ll_coord(embedding, {}) * {}{}".format(i, embedding[i-1], " + " if i < 96 else "")
+    query = query + ") as cosine_distance from public.music where origin in %s order by cosine_distance asc limit 1"
 
     cursor.execute(
-        "select id, embedding, x, y, x, origin, url, {} as cosine_distance from public.music where origin in %s order by cosine_distance asc limit 1".format(dot_product),
+        query,
         (tuple(origins), embedding))
     results = cursor.fetchone()
     next_origin = results[5]
