@@ -100,6 +100,7 @@ def get_first_neighbor(embedding, origins):
     for i in range(1, 97):
         query = query + "cube_ll_coord(embedding, {}) * {}{}".format(i, embedding[i-1], " + " if i < 96 else "")
     query = query + ") as cosine_distance from public.music where origin in %s order by cosine_distance asc limit 1"
+    print(query)
 
     cursor.execute(
         query,
