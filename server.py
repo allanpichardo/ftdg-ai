@@ -95,8 +95,14 @@ def get_embeddings_url_from_id(id):
 def get_first_neighbor(embedding, origins):
     global conn
     cursor = conn.cursor()
+
+    dot_product = "1-("
+    for i in range(1, 97):
+        dot_product = dot_product + "cube_ll_coord(embedding, {}) * {}{}".format(i, embedding[i-1], " + " if i < 96 else "")
+    dot_product = dot_product + ")"
+
     cursor.execute(
-        "select id, embedding, x, y, x, origin, url from public.music where origin in %s order by embedding <-> cube(%s::float8[]) asc limit 1",
+        "select id, embedding, x, y, x, origin, url, {} as cosine_distance from public.music where origin in %s order by cosine_distance asc limit 1".format(dot_product),
         (tuple(origins), embedding))
     results = cursor.fetchone()
     next_origin = results[5]
