@@ -24,7 +24,7 @@ def l2_normalize(v):
 
 
 def maginitude(v):
-    return np.sqrt(v.dot(v))
+    return np.sqrt(v.dot(v)).item()
 
 
 def insert_data(row_data, cursor):
