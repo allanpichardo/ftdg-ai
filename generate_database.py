@@ -39,7 +39,7 @@ if __name__ == '__main__':
                         default=os.path.join(os.path.dirname(__file__), 'music'))
     parser.add_argument('--triplet_model', type=str, help='Path to a savedmodel of triplet model',
                         default='saved_models/triplet/efficientnet_v3.0')
-    parser.add_argument('--normalize', type=bool, help='Normalize embeddings', default=True)
+    parser.add_argument('--normalize', type=bool, help='Normalize embeddings', default=False)
     args = parser.parse_args()
 
     music_path = args.music_path
@@ -66,12 +66,13 @@ if __name__ == '__main__':
 
     row_data = []
     for i in range(len(tsne)):
-        length = maginitude(Y[i])
+
         normed = l2_normalize(Y[i]) if normalized else Y[i]
         vector = []
         for j in range(len(normed)):
             vector.append(normed.item(j))
 
+        length = maginitude(vector)
         coords = tsne[i]
         url = urls[i]
         origin = labels[i]
