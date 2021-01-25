@@ -9,6 +9,7 @@ from sklearn.decomposition import PCA
 import psycopg2
 from psycopg2.extras import execute_values
 import numpy as np
+import math
 
 
 def get_url_from_filename(filename):
@@ -24,7 +25,10 @@ def l2_normalize(v):
 
 
 def maginitude(v):
-    return np.sqrt(v.dot(v)).item()
+    mag = 0
+    for n in v:
+        mag = mag + (n * n)
+    return math.sqrt(mag)
 
 
 def insert_data(row_data, cursor):
