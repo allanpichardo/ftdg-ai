@@ -13,6 +13,7 @@ import os
 import tensorflow as tf
 import psycopg2
 from flask import jsonify
+import math
 
 load_dotenv()
 app = Flask(__name__)
@@ -86,20 +87,27 @@ def get_preview_from_id(id):
 def get_embeddings_url_from_id(id):
     global conn
     cursor = conn.cursor()
-    sql = "select embedding, url from public.music where id = %s"
+    sql = "select embedding, url, magnitude from public.music where id = %s"
     cursor.execute(sql, (id,))
     results = cursor.fetchone()
-    return list(eval(results[0])), results[1]
+    return list(eval(results[0])), results[1], results[2]
 
 
-def get_first_neighbor(embedding, origins):
+def get_maginitude(v):
+    mag = 0
+    for n in v:
+        mag = mag + (n * n)
+    return math.sqrt(mag)
+
+
+def get_first_neighbor(embedding, origins, magnitude):
     global conn
     cursor = conn.cursor()
 
-    query = "select id, embedding, x, y, x, origin, url, 1-("
+    query = "select id, embedding, x, y, x, origin, url, magnitude, 1-("
     for i in range(1, 97):
         query = query + "cube_ll_coord(embedding, {}) * {}{}".format(i, embedding[i-1], " + " if i < 96 else "")
-    query = query + ") as cosine_distance from public.music where origin in %s order by cosine_distance asc limit 1"
+    query = query + ") / (magnitude * {})".format(magnitude) + " as cosine_distance from public.music where origin in %s order by cosine_distance asc limit 1"
 
     cursor.execute(
         query,
@@ -169,12 +177,14 @@ def search():
         id = request.args.get('id')
         url = ''
         embeddings = None
+        magnitude = 0
         if id:
-            embeddings, url = get_embeddings_url_from_id(id)
+            embeddings, url, magnitude = get_embeddings_url_from_id(id)
         elif query:
             url = get_track_preview(query)
             pcm = read_mp3_data(url)
             embeddings = get_embeddings_from_pcm(pcm)
+            magnitude = get_maginitude(embeddings)
         am = america.copy()
         treks = {
             "success": True,
@@ -183,7 +193,7 @@ def search():
             "constellation": []
         }
         while len(am) > 0:
-            results, next_embedding, new_am = get_first_neighbor(embeddings, am)
+            results, next_embedding, new_am = get_first_neighbor(embeddings, am, magnitude)
             treks['constellation'].append({
                 "id": results[0],
                 "x": results[2],
@@ -194,7 +204,7 @@ def search():
             })
             # embeddings = next_embedding
             am = new_am
-        results, next_embedding, new_am = get_first_neighbor(embeddings, africa.copy())
+        results, next_embedding, new_am = get_first_neighbor(embeddings, africa.copy(), magnitude)
         treks['constellation'].append({
             "id": results[0],
             "x": results[2],
