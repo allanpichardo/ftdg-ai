@@ -23,8 +23,12 @@ def l2_normalize(v):
     return v / norm
 
 
+def maginitude(v):
+    return np.sqrt(v.dot(v))
+
+
 def insert_data(row_data, cursor):
-    sql = """INSERT INTO public.music (url, embedding, x, y, z, origin) VALUES %s"""
+    sql = """INSERT INTO public.music (url, embedding, x, y, z, origin, magnitude) VALUES %s"""
     execute_values(cursor, sql, row_data, template='''(%s, cube(%s::float8[]), %s, %s, %s, %s)''')
 
 
@@ -62,6 +66,7 @@ if __name__ == '__main__':
 
     row_data = []
     for i in range(len(tsne)):
+        length = maginitude(Y[i])
         normed = l2_normalize(Y[i]) if normalized else Y[i]
         vector = []
         for j in range(len(normed)):
@@ -70,7 +75,7 @@ if __name__ == '__main__':
         coords = tsne[i]
         url = urls[i]
         origin = labels[i]
-        data = (url, vector, coords.item(0), coords.item(1), coords.item(2), origin)
+        data = (url, vector, coords.item(0), coords.item(1), coords.item(2), origin, length)
         row_data.append(data)
 
     print("Connecting to database at {}:{}".format(os.environ['DB_HOST'], os.environ['DB_PORT']))
