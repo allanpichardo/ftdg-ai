@@ -146,7 +146,7 @@ def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
         # tf.keras.layers.BatchNormalization(),
         # tf.keras.layers.Dropout(0.3),
         tf.keras.layers.Dense(embedding_size, activation=None),
-        tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
+        # tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
     ])
     return model
 
