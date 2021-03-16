@@ -80,7 +80,7 @@ def get_wavform_input_layer(sr=22050, duration=8.0):
     return input
 
 
-def get_minmax_normalize_layer(input_shape=(341, 128, 1), epsilon=0.000001):
+def get_minmax_normalize_layer(input_shape=(341, 128, 3), epsilon=0.000001):
     i = tf.keras.Input(shape=input_shape)
     min = tf.reduce_min(i)
     max = tf.reduce_max(i)
