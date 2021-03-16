@@ -54,6 +54,8 @@ if __name__ == '__main__':
         model = get_efficientnet_triplet(embedding_size=embedding_dim)
     elif architecture == 'inception':
         model = get_inception_resnet_triplet(embedding_size=embedding_dim)
+    elif architecture == 'simple':
+        model = get_vgg_triplet(embedding_size=embedding_dim)
 
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=lr, decay=1e-3),

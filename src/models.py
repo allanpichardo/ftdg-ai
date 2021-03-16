@@ -15,12 +15,12 @@ import os
 def get_audio_layer(SR=22050, DT=8.0):
     input_shape = (1, int(SR * DT))
 
-    # stft_mag = kapre.composed.get_stft_magnitude_layer(input_shape=input_shape, return_decibel=True, n_fft=256, win_length=2048, input_data_format='channels_first',
-    #                                    output_data_format='channels_last')
+    stft_mag = kapre.composed.get_stft_magnitude_layer(input_shape=input_shape, return_decibel=True, n_fft=256, win_length=2048, input_data_format='channels_first',
+                                       output_data_format='channels_last')
     melspectro = kapre.composed.get_melspectrogram_layer(input_shape=input_shape, return_decibel=True, input_data_format='channels_first',
                                        output_data_format='channels_last')
-    # logfreq = kapre.composed.get_log_frequency_spectrogram_layer(input_shape=input_shape, return_decibel=True, log_n_bins=128, log_bins_per_octave=18, input_data_format='channels_first',
-    #                                    output_data_format='channels_last')
+    logfreq = kapre.composed.get_log_frequency_spectrogram_layer(input_shape=input_shape, return_decibel=True, log_n_bins=128, log_bins_per_octave=18, input_data_format='channels_first',
+                                       output_data_format='channels_last')
     # mfcc = kapre.LogmelToMFCC()
 
     # melgram_r = get_melspectrogram_layer(input_shape=input_shape, n_fft=2048, hop_length=512, mel_f_min=40.0,
@@ -39,27 +39,27 @@ def get_audio_layer(SR=22050, DT=8.0):
     epsilon = 1e-6
     i = tf.keras.layers.Input(shape=input_shape)
 
-    # r = stft_mag(i)
-    # r = tf.keras.layers.Cropping2D(((0, 0), (0, 1)))(r)
+    r = stft_mag(i)
+    r = tf.keras.layers.Cropping2D(((0, 0), (0, 1)))(r)
     # r = melgram_r(i)
     # r = tf.math.log(r + epsilon)
     # r = LogmelToMFCC(n_mfccs=32)(r)
 
-    # g = melspectro(i)
+    g = melspectro(i)
     # g = melgram_g(i)
     # g = tf.math.log(g + epsilon)
     # g = LogmelToMFCC(n_mfccs=32)(g)
     # g = tf.keras.layers.ZeroPadding2D((86, 0))(g)
 
-    # b = logfreq(i)
+    b = logfreq(i)
     # b = melgram_b(i)
     # b = tf.math.log(b + epsilon)
     # b = LogmelToMFCC(n_mfccs=32)(b)
     # b = tf.keras.layers.ZeroPadding2D((129, 0))(b)
 
-    # x = tf.keras.layers.Concatenate()([r, g, b])
+    x = tf.keras.layers.Concatenate()([r, g, b])
     # x = r
-    x = melspectro(i)
+    # x = melspectro(i)
     # x = mfcc(x)
     return Model(inputs=i, outputs=x, name='triple_spectrogram')
 
@@ -99,16 +99,16 @@ def get_2d_encoder():
         x = tf.keras.layers.ReLU()(x)
     x = tf.keras.layers.MaxPooling2D()(x)
 
-    for i in range(1):
-        x = tf.keras.layers.Conv2D(32, (3, 3), padding='same')(x)
-        x = tf.keras.layers.BatchNormalization()(x)
-        x = tf.keras.layers.ReLU()(x)
-    x = tf.keras.layers.MaxPooling2D()(x)
-
-    for i in range(1):
-        x = tf.keras.layers.Conv2D(64, (3, 3), padding='same')(x)
-        x = tf.keras.layers.BatchNormalization()(x)
-        x = tf.keras.layers.ReLU()(x)
+    # for i in range(1):
+    #     x = tf.keras.layers.Conv2D(16, (3, 3), padding='same')(x)
+    #     x = tf.keras.layers.BatchNormalization()(x)
+    #     x = tf.keras.layers.ReLU()(x)
+    # x = tf.keras.layers.MaxPooling2D()(x)
+    #
+    # for i in range(1):
+    #     x = tf.keras.layers.Conv2D(16, (3, 3), padding='same')(x)
+    #     x = tf.keras.layers.BatchNormalization()(x)
+    #     x = tf.keras.layers.ReLU()(x)
 
     x = tf.keras.layers.GlobalAveragePooling2D()(x)
     model = Model(inputs=input, outputs=x, name='2d_encoder')
@@ -161,7 +161,7 @@ def get_vgg_triplet(sr=22050, duration=8.0, embedding_size=128):
         i,
         get_minmax_normalize_layer(),
         encoder,
-        tf.keras.layers.Dropout(0.5),
+        tf.keras.layers.Dropout(0.1),
         tf.keras.layers.Dense(embedding_size, activation=None),
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
     ])
@@ -224,6 +224,7 @@ def res_layer(x, filters, pooling=False, dropout=0.0, stride=1, channel_axis=3):
 
 
 if __name__ == '__main__':
-    model = get_efficientnet_triplet()
+    model = get_vgg_triplet()
+    # model = get_efficientnet_triplet()
     model.summary()
     # print(model.output_shape)
