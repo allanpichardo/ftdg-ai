@@ -70,6 +70,8 @@ if __name__ == '__main__':
         print("Loading weights from checkpoint {}".format(checkpoint))
         model.load_weights(checkpoint)
 
+    model.summary()
+
     model.fit(train, epochs=epochs, callbacks=[
         tf.keras.callbacks.TensorBoard(log_dir=log_dir, embeddings_freq=embed_freq),
         tf.keras.callbacks.ModelCheckpoint(checkpoint, verbose=1),
