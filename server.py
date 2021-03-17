@@ -204,7 +204,7 @@ def search():
                 "origin": results[5],
                 "url": results[6]
             })
-            # embeddings = next_embedding
+            embeddings = next_embedding
             am = new_am
         results, next_embedding, new_am = get_first_neighbor(embeddings, africa.copy(), magnitude)
         treks['constellation'].append({
