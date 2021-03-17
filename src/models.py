@@ -140,16 +140,17 @@ def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
                                                            weights='imagenet')
     model = tf.keras.Sequential([
         i,
-        # get_minmax_normalize_layer(),
+        get_minmax_normalize_layer(),
         # tf.keras.layers.Conv2D(3, (3, 3), padding='same', activation='sigmoid'),
         # ChannelSwap(data_format='channels_last'),
         # tf.keras.layers.experimental.preprocessing.Normalization(name='normalizer'),
-        tf.keras.layers.BatchNormalization(),
+        # tf.keras.layers.BatchNormalization(),
         en,
         tf.keras.layers.BatchNormalization(),
-        # tf.keras.layers.Dropout(0.3),
+        tf.keras.layers.Dropout(0.1),
+        tf.keras.layers.Dense(256, activation='tanh'),
         tf.keras.layers.Dense(embedding_size, activation=None),
-        # tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
+        tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
     ])
     return model
 

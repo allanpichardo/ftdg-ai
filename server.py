@@ -109,6 +109,8 @@ def get_first_neighbor(embedding, origins, magnitude):
         query = query + "cube_ll_coord(embedding, {}) * {}{}".format(i, embedding[i-1], " + " if i < 96 else "")
     query = query + ") / (magnitude * {})".format(magnitude) + " as cosine_distance from public.music where origin in %s order by cosine_distance asc limit 1"
 
+    print(query)
+
     cursor.execute(
         query,
         (tuple(origins),))
