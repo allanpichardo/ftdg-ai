@@ -176,6 +176,7 @@ def search():
     global conn
     global america
     global africa
+    global length
     try:
         query = request.args.get('q')
         id = request.args.get('id')
@@ -196,7 +197,8 @@ def search():
             "query_url": url,
             "constellation": []
         }
-        while len(am) > 0:
+        iteration = length
+        while len(am) > 0 and iteration > 0:
             results, next_embedding, new_am = get_first_neighbor(embeddings, am, magnitude)
             treks['constellation'].append({
                 "id": results[0],
@@ -208,6 +210,7 @@ def search():
             })
             # embeddings = next_embedding
             am = new_am
+            iteration = iteration - 1
         results, next_embedding, new_am = get_first_neighbor(embeddings, africa.copy(), magnitude)
         treks['constellation'].append({
             "id": results[0],
