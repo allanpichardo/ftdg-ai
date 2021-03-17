@@ -8,6 +8,7 @@ from kapre.composed import get_melspectrogram_layer
 from sklearn.preprocessing import LabelEncoder
 from collections import Counter
 import sys
+import librosa
 
 
 class SoundSequence(tf.keras.utils.Sequence):
@@ -101,9 +102,10 @@ class SoundSequence(tf.keras.utils.Sequence):
         Y = []
 
         for i, (path, label) in enumerate(zip(wav_paths, labels)):
-            rate, wav = wavfile.read(path)
+            wav, rate = librosa.load(path, res_type='kaiser_fast')
+            # rate, wav = wavfile.read(path)
             wav = wav[:rate * int(self.duration)]
-            X.append(wav.reshape(1, -1))
+            X.append(wav)
             Y.append(to_categorical(label, num_classes=self.n_classes))
             # X[i,] = wav.reshape(1, -1)
             # Y[i,] = to_categorical(label, num_classes=self.n_classes)
