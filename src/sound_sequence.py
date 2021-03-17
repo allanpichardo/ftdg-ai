@@ -82,7 +82,7 @@ class SoundSequence(tf.keras.utils.Sequence):
         Y = []
 
         for i, (path, label) in enumerate(zip(wav_paths, labels)):
-            rate, wav = wavfile.read(path)
+            wav, rate = librosa.load(path, res_type='kaiser_fast')
             wav = wav[:rate * int(self.duration)]
             X.append(wav.reshape(1, -1))
 
@@ -105,7 +105,7 @@ class SoundSequence(tf.keras.utils.Sequence):
             wav, rate = librosa.load(path, res_type='kaiser_fast')
             # rate, wav = wavfile.read(path)
             wav = wav[:rate * int(self.duration)]
-            X.append(wav)
+            X.append(wav.reshape(1, -1))
             Y.append(to_categorical(label, num_classes=self.n_classes))
             # X[i,] = wav.reshape(1, -1)
             # Y[i,] = to_categorical(label, num_classes=self.n_classes)
@@ -140,7 +140,5 @@ if __name__ == '__main__':
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
                         batch_size=1, subset='validation')
 
-    x, paths, labels = val.get_all()
-    print(x)
-    print(paths)
-    print(labels)
+    for x in val:
+        print(x)
