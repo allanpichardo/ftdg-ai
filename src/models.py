@@ -132,7 +132,7 @@ def get_inception_resnet_triplet(sr=22050, duration=8.0, embedding_size=256):
     return model
 
 
-def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
+def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=96):
     i = get_audio_layer(sr, duration)
     en = tf.keras.applications.efficientnet.EfficientNetB0(include_top=False,
                                                            input_shape=(341, 128, 3),
@@ -146,10 +146,22 @@ def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=256):
         # tf.keras.layers.experimental.preprocessing.Normalization(name='normalizer'),
         # tf.keras.layers.BatchNormalization(),
         en,
+        tf.keras.layers.Reshape((32, 40, 1)),
+        # tf.keras.layers.Conv2D(16, 3, padding='same', activation='tanh'),
+        # tf.keras.layers.Conv2D(16, 3, padding='same', activation='tanh'),
+        # tf.keras.layers.BatchNormalization(),
+        # tf.keras.layers.MaxPooling2D(),
+        # tf.keras.layers.Conv2D(32, 3, padding='same', activation='tanh'),
+        # tf.keras.layers.Conv2D(48, 3, padding='same', activation='tanh'),
+        # tf.keras.layers.BatchNormalization(),
+        # tf.keras.layers.MaxPooling2D(),
+        tf.keras.layers.Conv2D(96, 3, padding='same', activation='tanh'),
         tf.keras.layers.BatchNormalization(),
-        tf.keras.layers.Dropout(0.1),
+        # tf.keras.layers.MaxPooling2D(),
+        tf.keras.layers.GlobalMaxPool2D(),
+        # tf.keras.layers.Dropout(0.1),
         # tf.keras.layers.Dense(256, activation='tanh'),
-        tf.keras.layers.Dense(embedding_size, activation=None),
+        # tf.keras.layers.Dense(embedding_size, activation=None),
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
     ])
     return model
