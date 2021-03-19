@@ -50,7 +50,7 @@ if __name__ == '__main__':
     model_path = args.triplet_model
     normalized = args.normalize
 
-    sequences = SoundSequence(music_path=music_path, use_categorical=False, shuffle=False, subset='validation')
+    sequences = SoundSequence(music_path=music_path, use_categorical=False, shuffle=False, subset='validation', batch_size=4)
     X, paths, labels = sequences.get_all()
 
     labels = sequences.encoder.inverse_transform(labels)
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     model = tf.keras.models.load_model(model_path, compile=False, custom_objects={'tf': tf})
 
     print("Computing embeddings...")
-    Y = model.predict(X, batch_size=10)
+    Y = model.predict_generator(X)
 
     print("Computing TSNE...")
     # tsne = PCA(n_components=3).fit_transform(Y)
