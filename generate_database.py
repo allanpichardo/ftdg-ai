@@ -61,7 +61,7 @@ if __name__ == '__main__':
     model = tf.keras.models.load_model(model_path, compile=False, custom_objects={'tf': tf})
 
     print("Computing embeddings...")
-    Y = model.predict_generator(X)
+    Y = model.predict(sequences)
 
     print("Computing TSNE...")
     # tsne = PCA(n_components=3).fit_transform(Y)
