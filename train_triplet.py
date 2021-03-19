@@ -47,7 +47,11 @@ if __name__ == '__main__':
 
     train = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
                         shuffle=True, is_autoencoder=False, use_raw_audio=True,
-                        batch_size=batch_size, subset=subset)
+                        batch_size=batch_size, subset='training')
+
+    val = SoundSequence(os.path.join(os.path.dirname(__file__), 'music'), use_categorical=False,
+                        shuffle=True, is_autoencoder=False, use_raw_audio=True,
+                        batch_size=batch_size, subset='validation')
 
     model = get_efficientnet_triplet(embedding_size=embedding_dim)
     if architecture == 'efficientnet':
@@ -60,6 +64,7 @@ if __name__ == '__main__':
     model.compile(
         optimizer=tf.keras.optimizers.Adam(learning_rate=lr, decay=1e-3),
         loss=tfa.losses.TripletSemiHardLoss(margin=margin),
+        metrics='accuracy'
     )
 
     if freeze and architecture == 'efficientnet':
@@ -72,10 +77,10 @@ if __name__ == '__main__':
 
     model.summary()
 
-    model.fit(train, epochs=epochs, callbacks=[
+    model.fit(train, validation_data=val, epochs=epochs, callbacks=[
         tf.keras.callbacks.TensorBoard(log_dir=log_dir, embeddings_freq=embed_freq),
-        tf.keras.callbacks.ModelCheckpoint(checkpoint, verbose=1),
-        tf.keras.callbacks.EarlyStopping(monitor='loss', verbose=1, patience=5, mode='min')
+        tf.keras.callbacks.ModelCheckpoint(checkpoint, verbose=1, save_best_only=True),
+        tf.keras.callbacks.EarlyStopping(monitor='val_loss', verbose=1, patience=5, mode='min')
     ], class_weight=train.weights if use_weights else None)
 
     save_path = os.path.join(os.path.dirname(__file__), 'saved_models', 'triplet')
