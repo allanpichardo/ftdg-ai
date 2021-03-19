@@ -15,12 +15,15 @@ import os
 def get_audio_layer(SR=22050, DT=8.0):
     input_shape = (1, int(SR * DT))
 
-    # stft_mag = kapre.composed.get_stft_magnitude_layer(input_shape=input_shape, return_decibel=True, n_fft=256, win_length=2048, input_data_format='channels_first',
-    #                                    output_data_format='channels_last')
-    melspectro = kapre.composed.get_melspectrogram_layer(input_shape=input_shape, return_decibel=True, input_data_format='channels_first',
+    stft_mag = kapre.composed.get_stft_magnitude_layer(input_shape=input_shape, return_decibel=True, input_data_format='channels_first',
                                        output_data_format='channels_last')
-    # logfreq = kapre.composed.get_log_frequency_spectrogram_layer(input_shape=input_shape, return_decibel=True, log_n_bins=128, log_bins_per_octave=18, input_data_format='channels_first',
-    #                                    output_data_format='channels_last')
+    melspectro = kapre.composed.get_melspectrogram_layer(input_shape=input_shape, return_decibel=False, input_data_format='channels_first',
+                                       output_data_format='channels_last')
+    log_melspectro = kapre.composed.get_melspectrogram_layer(input_shape=input_shape, return_decibel=True,
+                                                         input_data_format='channels_first',
+                                                         output_data_format='channels_last', name="log_mel_spectrogram")
+    logfreq = kapre.composed.get_log_frequency_spectrogram_layer(input_shape=input_shape, return_decibel=True, log_n_bins=128, log_bins_per_octave=18, input_data_format='channels_first',
+                                       output_data_format='channels_last')
     # mfcc = kapre.LogmelToMFCC()
 
     # melgram_r = get_melspectrogram_layer(input_shape=input_shape, n_fft=2048, hop_length=512, mel_f_min=40.0,
@@ -45,7 +48,8 @@ def get_audio_layer(SR=22050, DT=8.0):
     # r = tf.math.log(r + epsilon)
     # r = LogmelToMFCC(n_mfccs=32)(r)
 
-    g = melspectro(i)
+    # g = logfreq(i)
+    # g = mfcc(g)
     # g = melgram_g(i)
     # g = tf.math.log(g + epsilon)
     # g = LogmelToMFCC(n_mfccs=32)(g)
@@ -57,7 +61,7 @@ def get_audio_layer(SR=22050, DT=8.0):
     # b = LogmelToMFCC(n_mfccs=32)(b)
     # b = tf.keras.layers.ZeroPadding2D((129, 0))(b)
 
-    x = tf.keras.layers.Concatenate()([g, g, g])
+    x = tf.keras.layers.Concatenate()([melspectro(i), log_melspectro(i), logfreq(i)])
     # x = r
     # x = melspectro(i)
     # x = mfcc(x)
@@ -136,7 +140,7 @@ def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=96):
     i = get_audio_layer(sr, duration)
     en = tf.keras.applications.efficientnet.EfficientNetB0(include_top=False,
                                                            input_shape=(341, 128, 3),
-                                                           pooling='max',
+                                                           pooling='avg',
                                                            weights='imagenet')
     model = tf.keras.Sequential([
         i,
@@ -144,9 +148,10 @@ def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=96):
         # tf.keras.layers.Conv2D(3, (3, 3), padding='same', activation='sigmoid'),
         # ChannelSwap(data_format='channels_last'),
         # tf.keras.layers.experimental.preprocessing.Normalization(name='normalizer'),
-        # tf.keras.layers.BatchNormalization(),
+        tf.keras.layers.BatchNormalization(),
+        # tf.keras.layers.experimental.preprocessing.RandomFlip(),
         en,
-        tf.keras.layers.Reshape((32, 40, 1)),
+        # tf.keras.layers.Reshape((32, 40, 1)),
         # tf.keras.layers.Conv2D(16, 3, padding='same', activation='tanh'),
         # tf.keras.layers.Conv2D(16, 3, padding='same', activation='tanh'),
         # tf.keras.layers.BatchNormalization(),
@@ -155,13 +160,13 @@ def get_efficientnet_triplet(sr=22050, duration=8.0, embedding_size=96):
         # tf.keras.layers.Conv2D(48, 3, padding='same', activation='tanh'),
         # tf.keras.layers.BatchNormalization(),
         # tf.keras.layers.MaxPooling2D(),
-        tf.keras.layers.Conv2D(96, 3, padding='same', activation='tanh'),
-        tf.keras.layers.BatchNormalization(),
+        # tf.keras.layers.Conv2D(96, 3, padding='same', activation='tanh'),
+        # tf.keras.layers.BatchNormalization(),
         # tf.keras.layers.MaxPooling2D(),
-        tf.keras.layers.GlobalMaxPool2D(),
+        # tf.keras.layers.GlobalMaxPool2D(),
         # tf.keras.layers.Dropout(0.1),
         # tf.keras.layers.Dense(256, activation='tanh'),
-        # tf.keras.layers.Dense(embedding_size, activation=None),
+        tf.keras.layers.Dense(embedding_size, activation=None),
         tf.keras.layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)),  # L2 normalize embeddings,
     ])
     return model
