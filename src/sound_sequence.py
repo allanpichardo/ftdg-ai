@@ -109,7 +109,7 @@ class SoundSequence(tf.keras.utils.Sequence):
             sample_size = rate * int(self.duration)
             difference = length - sample_size
             start = random.randint(0, difference)
-            wav = wav[start:sample_size-start]
+            wav = wav[start:sample_size+start]
             X.append(wav.reshape(1, -1))
             Y.append(to_categorical(label, num_classes=self.n_classes))
             # X[i,] = wav.reshape(1, -1)
