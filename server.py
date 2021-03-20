@@ -23,7 +23,7 @@ auth_manager = SpotifyClientCredentials()
 spotify = spotipy.Spotify(auth_manager=auth_manager)
 normalize = True if os.environ['NORMALIZE'] == 'true' else False
 version = os.environ['VERSION']
-length = int(os.environ['LENGTH']) if os.environ['LENGTH'] is not None else 6
+length = int(os.environ['LENGTH']) if os.environ['LENGTH'] is not None else 7
 
 
 model = None
