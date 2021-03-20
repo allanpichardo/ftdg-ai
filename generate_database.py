@@ -50,7 +50,7 @@ if __name__ == '__main__':
     model_path = args.triplet_model
     normalized = args.normalize
 
-    sequences = SoundSequence(music_path=music_path, use_categorical=False, shuffle=False, subset='validation', batch_size=4)
+    sequences = SoundSequence(music_path=music_path, use_categorical=False, shuffle=False, subset='validation', batch_size=16)
     X, paths, labels = sequences.get_all()
 
     labels = sequences.encoder.inverse_transform(labels)
